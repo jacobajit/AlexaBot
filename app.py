@@ -52,7 +52,7 @@ class StartAuthHandler(tornado.web.RequestHandler):
 		scope="alexa_all"
 		sd = json.dumps({
 		    "alexa:all": {
-		        "productID": "alexaweb",
+		        "productID": "jacobsalexatest",
 		        "productInstanceAttributes": {
 		            "deviceSerialNumber": "1"
 		        }
