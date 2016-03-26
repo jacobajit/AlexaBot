@@ -3,6 +3,25 @@
 		<title>Alexa Client</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="static/record.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.2.1/annyang.min.js"></script>
+
+		<script>
+
+
+			if (annyang) {
+			  // Let's define a command.
+			  var commands = {
+			    'hello alexa': startrecord,
+			    'thanks': stoprecord
+			  };
+
+			  // Add our commands to annyang
+			  annyang.addCommands(commands);
+
+			  // Start listening.
+			  annyang.start();
+			}
+		</script>
 		<style>
 		html, body {
 		  width:  100%;
