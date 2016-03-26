@@ -59,7 +59,7 @@ class StartAuthHandler(tornado.web.RequestHandler):
 		    }
 		})
 		url = "https://www.amazon.com/ap/oa"
-		path = "https" + "://" + self.request.host 
+		path = self.request.protocol + "://" + self.request.host 
 		print("boo")
 		callback = path + "/code"
 		payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
@@ -72,7 +72,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
 	@tornado.web.asynchronous
 	def get(self):
 		code=self.get_argument("code")
-		path = "https" + "://" + self.request.host 
+		path = self.request.protocol + "://" + self.request.host 
 		callback = path+"code"
 		payload = {"client_id" : Client_ID, "client_secret" : Client_Secret, "code" : code, "grant_type" : "authorization_code", "redirect_uri" : callback }
 		url = "https://api.amazon.com/auth/o2/token"
