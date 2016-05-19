@@ -109,7 +109,7 @@ class AudioHandler(BaseHandler):
 			self.set_status(403)
 		else:
                         phrase = "Hello"
-                        audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono', 'r': '-10'})
+                        audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
                         rxfile = audio.content
                         #Response(audio.content, mimetype='audio/mpeg')
                         print("audio.content:  ", audio.content)
