@@ -110,12 +110,12 @@ class AudioHandler(BaseHandler):
 		else:
                         phrase = "Hello alexa"
                         audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'wav'})
-                        #rxfile = audio.content
+                        rxfile = audio.content
                         #Response(audio.content, mimetype='audio/mpeg')
                         print("audio.content:  ", audio.content)
                         print("audio:  ", audio)
 
-                        rxfile = self.request.files['data'][0]['body']
+                        #rxfile = self.request.files['data'][0]['body']
 			tf = tempfile.NamedTemporaryFile(suffix=".wav")
 			tf.write(rxfile)
 			_input = AudioSegment.from_wav(tf.name)
