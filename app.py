@@ -162,6 +162,40 @@ class AudioHandler(BaseHandler):
 			for d in data:
 				if (len(d) >= 1024):
 			 	   audio = d.split('\r\n\r\n')[1].rstrip('--')
+
+
+			tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+			tf2.write(audio)
+			_input2 = AudioSegment.from_mp3(tf2.name)
+			tf2.close()
+
+			tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
+			output2=_input2.export(tf3.name, format="wav")
+
+
+			r = sr.Recognizer()
+			with sr.AudioFile(tf3) as source:
+			    audio = r.record(source) # read the entire audio file
+
+			# recognize speech using Sphinx
+			try:
+			    print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+			except sr.UnknownValueError:
+			    print("Sphinx could not understand audio")
+			except sr.RequestError as e:
+			    print("Sphinx error; {0}".format(e))
+
+			 
+
+
+
+
+
+
+
+
+
+
 			self.set_header('Content-Type', 'audio/mpeg')
 			self.write(audio)
 		self.finish()
