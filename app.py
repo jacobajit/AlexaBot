@@ -116,7 +116,7 @@ class MessageHandler(BaseHandler):
 
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
-
+        print("OUTPUT: ",output)
         event = output['entry'][0]['messaging']
         for x in event:
             if (x.get('message') and x['message'].get('text')):
