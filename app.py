@@ -145,7 +145,7 @@ class AudioHandler(BaseHandler):
         else:
             print("geting argument...")
             phrase=self.get_argument("text", default=None, strip=False)
-            print("Phrase: ",phrase)
+            print(phrase)
             # phrase = "What is 22 divided by 2?"
             audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
