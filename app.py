@@ -14,8 +14,8 @@ from pydub import AudioSegment
 import speech_recognition as sr
 
 
-# TOKEN = "<access_token>"
-# bot = Bot(TOKEN)
+TOKEN = "EAAJPHXpVWQIBAMXZC5aDFfQuCUUQfHIm65ccxiN39ymIz7haOVIpxFVqWsP5QviRZAc4xMdCvReTl2nzSikctr9ZAskZAABxzNpWZCCAeosR1mmsbqZBkpoZAbQNj9qdwD3PbxGowNNvGrTmqZBqFH5i6uSCF6aSDc0kaU1rM6RZCDAZDZD"
+bot = Bot(TOKEN)
 	
 def gettoken(uid):
 	red = redis.from_url(redis_url)
@@ -112,6 +112,19 @@ class MessageHandler(BaseHandler):
 			self.set_header('Content-Type', 'text/plain')
 			self.write(self.get_argument("hub.challenge", default=None, strip=False))
 			self.finish()
+
+	def post(self):
+		output = tornado.escape.json_decode(self.request.body) 
+
+        event = output['entry'][0]['messaging']
+        for x in event:
+            if (x.get('message') and x['message'].get('text')):
+                message = x['message']['text']
+                recipient_id = x['sender']['id']
+                bot.send_text_message(recipient_id, message)
+            else:
+                pass
+        return "success"
 				
 class AudioHandler(BaseHandler):
 	@tornado.web.authenticated
