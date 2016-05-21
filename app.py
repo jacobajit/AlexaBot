@@ -175,17 +175,19 @@ class AudioHandler(BaseHandler):
 
 			r = sr.Recognizer()
 			with sr.AudioFile(tf3) as source:
-			    audio = r.record(source) # read the entire audio file
+			    audio2 = r.record(source) # read the entire audio file
 
-			# recognize speech using Sphinx
+			# recognize speech using Wit.ai
+			WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
 			try:
-			    print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+			    print("Wit.ai thinks you said " + r.recognize_wit(audio, key=WIT_AI_KEY))
 			except sr.UnknownValueError:
-			    print("Sphinx could not understand audio")
+			    print("Wit.ai could not understand audio")
 			except sr.RequestError as e:
-			    print("Sphinx error; {0}".format(e))
+			    print("Could not request results from Wit.ai service; {0}".format(e))
 
 			 
+
 
 
 
