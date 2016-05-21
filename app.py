@@ -237,10 +237,11 @@ class AudioHandler(BaseHandler):
 
 
 
+            self.set_header('Content-Type', 'audio/mpeg')
+            self.write(audio)
 
-
-            self.set_header('Content-Type', 'text/plain')
-            self.write(transcription)
+            # self.set_header('Content-Type', 'text/plain')
+            # self.write(transcription)
             self.finish()
 
 
