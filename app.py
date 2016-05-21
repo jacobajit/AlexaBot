@@ -108,6 +108,8 @@ class MessageHandler(BaseHandler):
 	@tornado.web.asynchronous
 	def get(self):
 		if (self.get_argument("hub.verify_token", default=None, strip=False) == "my_voice_is_my_password_verify_me"):
+			print("yes")
+			self.set_header('Content-Type', 'text/plain')
 			self.write(self.get_argument("hub.verify_token", default=None, strip=False))
 			self.finish()
 				
