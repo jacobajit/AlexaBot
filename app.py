@@ -178,6 +178,7 @@ class AudioHandler(BaseHandler):
 			    audio2 = r.record(source) # read the entire audio file
 
 			# recognize speech using Wit.ai
+			print(token)
 			WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
 			try:
 			    print("Wit.ai thinks you said " + r.recognize_wit(audio2, key=WIT_AI_KEY))
