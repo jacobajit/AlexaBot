@@ -35,8 +35,8 @@ def gettoken(uid):
 		return False
 	
 class BaseHandler(tornado.web.RequestHandler):
-    def get_current_user(self):
-        return self.get_cookie("user")
+	def get_current_user(self):
+		return self.get_cookie("user")
 
 
 class MainHandler(BaseHandler):
@@ -55,12 +55,12 @@ class StartAuthHandler(tornado.web.RequestHandler):
 	def get(self):
 		scope="alexa_all"
 		sd = json.dumps({
-		    "alexa:all": {
-		        "productID": "jacobsalexatest",
-		        "productInstanceAttributes": {
-		            "deviceSerialNumber": "1"
-		        }
-		    }
+			"alexa:all": {
+				"productID": "jacobsalexatest",
+				"productInstanceAttributes": {
+					"deviceSerialNumber": "1"
+				}
+			}
 		})
 		url = "https://www.amazon.com/ap/oa"
 		path = "https" + "://" + self.request.host 
@@ -108,7 +108,7 @@ class MessageHandler(BaseHandler):
 	@tornado.web.asynchronous
 	def get(self):
 		if (request.args.get("hub.verify_token") == "my_voice_is_my_password_verify_me"):
-            return request.args.get("hub.challenge")
+			return request.args.get("hub.challenge")
 				
 class AudioHandler(BaseHandler):
 	@tornado.web.authenticated
@@ -119,20 +119,20 @@ class AudioHandler(BaseHandler):
 		if (token == False):
 			self.set_status(403)
 		else:
-                        phrase = "What is 22 divided by 2?"
-                        audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-                        rxfile = audio.content
-                        #Response(audio.content, mimetype='audio/mpeg')
-                        #print("audio.content:  ", audio.content)
+						phrase = "What is 22 divided by 2?"
+						audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+						rxfile = audio.content
+						#Response(audio.content, mimetype='audio/mpeg')
+						#print("audio.content:  ", audio.content)
 
-                        #rxfile = self.request.files['data'][0]['body']
+						#rxfile = self.request.files['data'][0]['body']
 			tf = tempfile.NamedTemporaryFile(suffix=".wav")
 			tf.write(rxfile)
 			_input = AudioSegment.from_wav(tf.name)
 			tf.close()
 
-                        #print("TF:  ", tf)
-                        #print("RX:  ", rxfile)
+						#print("TF:  ", tf)
+						#print("RX:  ", rxfile)
 
 			tf = tempfile.NamedTemporaryFile(suffix=".wav")
 			output = _input.set_channels(1).set_frame_rate(16000)
@@ -140,24 +140,24 @@ class AudioHandler(BaseHandler):
 			url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
 			headers = {'Authorization' : 'Bearer %s' % token}
 			d = {
-		    	"messageHeader": {
-		        	"deviceContext": [
-		            	{
-		                	"name": "playbackState",
-		                	"namespace": "AudioPlayer",
-		                	"payload": {
-		                    	"streamId": "",
-		         			   	"offsetInMilliseconds": "0",
-		                    	"playerActivity": "IDLE"
-		                	}
-		            	}
-		        	]
-		    	},
-		    	"messageBody": {
-		        	"profile": "alexa-close-talk",
-		        	"locale": "en-us",
-		        	"format": "audio/L16; rate=16000; channels=1"
-		    	}
+				"messageHeader": {
+					"deviceContext": [
+						{
+							"name": "playbackState",
+							"namespace": "AudioPlayer",
+							"payload": {
+								"streamId": "",
+								"offsetInMilliseconds": "0",
+								"playerActivity": "IDLE"
+							}
+						}
+					]
+				},
+				"messageBody": {
+					"profile": "alexa-close-talk",
+					"locale": "en-us",
+					"format": "audio/L16; rate=16000; channels=1"
+				}
 			}
 			files = [
 				('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
@@ -171,7 +171,7 @@ class AudioHandler(BaseHandler):
 			data = r.content.split(boundary)
 			for d in data:
 				if (len(d) >= 1024):
-			 	   audio = d.split('\r\n\r\n')[1].rstrip('--')
+				   audio = d.split('\r\n\r\n')[1].rstrip('--')
 
 
 			tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
@@ -185,17 +185,17 @@ class AudioHandler(BaseHandler):
 
 			r = sr.Recognizer()
 			with sr.AudioFile(tf3) as source:
-			    audio2 = r.record(source) # read the entire audio file
+				audio2 = r.record(source) # read the entire audio file
 
 			# recognize speech using Wit.ai
 			print(token)
 			WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
 			try:
-			    print("Wit.ai thinks you said " + r.recognize_wit(audio2, key=WIT_AI_KEY))
+				print("Wit.ai thinks you said " + r.recognize_wit(audio2, key=WIT_AI_KEY))
 			except sr.UnknownValueError:
-			    print("Wit.ai could not understand audio")
+				print("Wit.ai could not understand audio")
 			except sr.RequestError as e:
-			    print("Could not request results from Wit.ai service; {0}".format(e))
+				print("Could not request results from Wit.ai service; {0}".format(e))
 
 			 
 
@@ -218,8 +218,8 @@ class AudioHandler(BaseHandler):
 
 def main():
 	settings = {
-	    "cookie_secret": "parisPOLANDbroadFENCEcornWOULD",
-	    "login_url": "/static/welcome.html",
+		"cookie_secret": "parisPOLANDbroadFENCEcornWOULD",
+		"login_url": "/static/welcome.html",
 	}
 	static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 	application = tornado.web.Application([(r"/", MainHandler),
