@@ -138,7 +138,7 @@ class MessageHandler(BaseHandler):
 class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
-    def get(self):
+    def post(self):
         print("getting post...")#
         uid = tornado.escape.xhtml_escape(self.current_user)
         token = gettoken(uid)
