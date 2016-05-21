@@ -133,7 +133,7 @@ class MessageHandler(BaseHandler):
         self.finish()
                 
 class AudioHandler(BaseHandler):
-    @tornado.web.authenticated
+    # @tornado.web.authenticated
     @tornado.web.asynchronous
     def post(self):
         print("getting post...")
