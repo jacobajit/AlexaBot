@@ -13,6 +13,9 @@ import uuid
 from pydub import AudioSegment
 import speech_recognition as sr
 
+
+# TOKEN = "<access_token>"
+# bot = Bot(TOKEN)
 	
 def gettoken(uid):
 	red = redis.from_url(redis_url)
@@ -99,6 +102,13 @@ class LogoutHandler(BaseHandler):
 		self.set_header('Content-Type', 'text/plain')
 		self.write("Logged Out, Goodbye")
 		self.finish()
+
+class MessageHandler(BaseHandler):
+	@tornado.web.authenticated
+	@tornado.web.asynchronous
+	def get(self):
+		if (request.args.get("hub.verify_token") == "my_voice_is_my_password_verify_me"):
+            return request.args.get("hub.challenge")
 				
 class AudioHandler(BaseHandler):
 	@tornado.web.authenticated
@@ -217,6 +227,7 @@ def main():
 											(r"/code", CodeAuthHandler),
 											(r"/logout", LogoutHandler),
 											(r"/audio", AudioHandler),
+											(r"/webhook", MessageHandler),
 											(r'/(favicon.ico)', tornado.web.StaticFileHandler,{'path': static_path}),
 											(r'/static/(.*)', tornado.web.StaticFileHandler, {'path': static_path}),
 											], **settings)
