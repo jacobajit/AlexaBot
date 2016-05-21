@@ -11,7 +11,7 @@ import tempfile
 import redis
 import uuid
 from pydub import AudioSegment
-import SpeechRecognition as sr
+import speech_recognition as sr
 
 	
 def gettoken(uid):
