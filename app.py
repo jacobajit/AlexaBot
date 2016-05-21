@@ -122,6 +122,11 @@ class MessageHandler(BaseHandler):
             if (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
+
+                alexaresponse = requests.post('https://helloalexa.herokuapp.com/audio', params={'text': 'What is 22 divided by 2?'})
+                print(alexaresponse.text)
+
+
                 bot.send_text_message(recipient_id, message)
             else:
                 pass
@@ -132,11 +137,13 @@ class AudioHandler(BaseHandler):
     @tornado.web.asynchronous
     def post(self):
         uid = tornado.escape.xhtml_escape(self.current_user)
-        token = gettoken(uid)
+        # token = gettoken(uid)
+        token="Atza|IQEBLjAsAhRon-aAXeKGG7H6ywl8IEalgcRLYAIUZhwck9GJfrHygMQQgEbNQV27nisbAcQFD5whS6_KbiysBu7J5kUtYGugEL64loIxICtuqMlep_pJOZs1cjynU-InqzoedEdmsASDD5uoiUc0vEAvxQNKO7YBWAV1czHUJ3UmQcXGwuTjH9pov4jGLbKsD4opY4xXdRwKsnxVnyQWi9eT4OgjpuqtrEKtFuly6n9ufr0nNqUcSMds5p9kLUtvguz7kKFWFnnfsZDTcSYw05ZwfNd9S5HDyPkgkPWYRSq1K-Y0IyLgHUOz1WYDisC1vEPOjD_qVGSmFr0nBHlNaw3KXPtCdLriIiYwLzVK_RBlMKYcRAJD-PuOppPXKDAffGdemw7akXeaQc_DScU22xJxF4TsM8CJ2nLq93iA3snEHC2QUqwYt7yPEIrFv12MmSU0jAfBsWg0PXNP_GO81wi-Zzj4PckqTOIJt-RdM0s_H6HsjVIF76o5EUX5agq9u0ocTmoqDyva0LWKLaPaTBtZMjuzFuiEvyGRW0utEY1-V_M"
         if (token == False):
             self.set_status(403)
         else:
-            phrase = "What is 22 divided by 2?"
+            phrase=self.get_argument("text", default=None, strip=False)
+            # phrase = "What is 22 divided by 2?"
             audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
             #Response(audio.content, mimetype='audio/mpeg')
