@@ -123,11 +123,11 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
 
-                alexaresponse = requests.post('https://helloalexa.herokuapp.com/audio', params={'text': 'What is 22 divided by 2?'})
+                alexaresponse = requests.post('https://helloalexa.herokuapp.com/audio', params={'text': message})
                 print(alexaresponse.text)
 
 
-                bot.send_text_message(recipient_id, message)
+                bot.send_text_message(recipient_id, alexaresponse.text)
             else:
                 pass
         self.finish()
