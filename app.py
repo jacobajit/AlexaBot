@@ -123,7 +123,7 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
 
-                alexaresponse = requests.post('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
                 print(alexaresponse.text)
 
 
@@ -135,7 +135,7 @@ class MessageHandler(BaseHandler):
 class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
-    def post(self):
+    def get(self):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         # token = gettoken(uid)
