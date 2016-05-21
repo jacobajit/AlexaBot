@@ -125,7 +125,7 @@ class MessageHandler(BaseHandler):
                 bot.send_text_message(recipient_id, message)
             else:
                 pass
-        return "success"
+        self.finish()
                 
 class AudioHandler(BaseHandler):
     @tornado.web.authenticated
