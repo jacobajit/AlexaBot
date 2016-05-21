@@ -104,7 +104,6 @@ class LogoutHandler(BaseHandler):
 		self.finish()
 
 class MessageHandler(BaseHandler):
-	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
 		print("here")
