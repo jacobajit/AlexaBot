@@ -107,8 +107,8 @@ class MessageHandler(BaseHandler):
 	@tornado.web.authenticated
 	@tornado.web.asynchronous
 	def get(self):
-		if (request.args.get("hub.verify_token") == "my_voice_is_my_password_verify_me"):
-			return request.args.get("hub.challenge")
+		if (self.get_argument("hub.verify_token", default=None, strip=False) == "my_voice_is_my_password_verify_me"):
+			return self.get_argument("hub.verify_token", default=None, strip=False)
 				
 class AudioHandler(BaseHandler):
 	@tornado.web.authenticated
