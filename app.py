@@ -123,6 +123,8 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
 
+
+                print("Getting Alexa's response from AudioHandler. Message was: "+message)
                 alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
                 print(alexaresponse.text)
 
