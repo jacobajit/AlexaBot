@@ -134,6 +134,10 @@ class MessageHandler(BaseHandler):
                 pass
         self.set_status(200)
         self.finish()
+
+    def write_error(self, status_code, **kwargs):
+        self.write("Gosh darnit, user! You caused a %d error." % status_code)
+
               
 #old audio version  
 # class AudioHandler(BaseHandler):
