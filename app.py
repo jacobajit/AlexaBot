@@ -180,7 +180,7 @@ class AudioHandler(BaseHandler):
 			# recognize speech using Wit.ai
 			WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
 			try:
-			    print("Wit.ai thinks you said " + r.recognize_wit(audio, key=WIT_AI_KEY))
+			    print("Wit.ai thinks you said " + r.recognize_wit(audio2, key=WIT_AI_KEY))
 			except sr.UnknownValueError:
 			    print("Wit.ai could not understand audio")
 			except sr.RequestError as e:
