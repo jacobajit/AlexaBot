@@ -12,6 +12,7 @@ import redis
 import uuid
 from pydub import AudioSegment
 import speech_recognition as sr
+from pymessenger.bot import Bot
 
 
 TOKEN = "EAAJPHXpVWQIBAMXZC5aDFfQuCUUQfHIm65ccxiN39ymIz7haOVIpxFVqWsP5QviRZAc4xMdCvReTl2nzSikctr9ZAskZAABxzNpWZCCAeosR1mmsbqZBkpoZAbQNj9qdwD3PbxGowNNvGrTmqZBqFH5i6uSCF6aSDc0kaU1rM6RZCDAZDZD"
