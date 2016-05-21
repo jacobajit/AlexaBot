@@ -237,7 +237,7 @@ class AudioHandler(BaseHandler):
 
 
             self.set_header('Content-Type', 'text/plain')
-            self.write(transcription, default=None, strip=False))
+            self.write(transcription)
             self.finish()
 
 
