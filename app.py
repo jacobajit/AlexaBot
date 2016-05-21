@@ -217,7 +217,8 @@ class AudioHandler(BaseHandler):
             print(token)
             WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
             try:
-                print("Wit.ai thinks you said " + r.recognize_wit(audio2, key=WIT_AI_KEY))
+                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
+                print("Wit.ai thinks you said " + transcription )
             except sr.UnknownValueError:
                 print("Wit.ai could not understand audio")
             except sr.RequestError as e:
@@ -235,8 +236,8 @@ class AudioHandler(BaseHandler):
 
 
 
-            self.set_header('Content-Type', 'audio/mpeg')
-            self.write(audio)
+            self.set_header('Content-Type', 'text/plain')
+            self.write(transcription, default=None, strip=False))
             self.finish()
 
 
