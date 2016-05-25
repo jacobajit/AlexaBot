@@ -18,7 +18,7 @@ from pymessenger.bot import Bot
 TOKEN = "EAAJPHXpVWQIBAMXZC5aDFfQuCUUQfHIm65ccxiN39ymIz7haOVIpxFVqWsP5QviRZAc4xMdCvReTl2nzSikctr9ZAskZAABxzNpWZCCAeosR1mmsbqZBkpoZAbQNj9qdwD3PbxGowNNvGrTmqZBqFH5i6uSCF6aSDc0kaU1rM6RZCDAZDZD"
 bot = Bot(TOKEN)
     
-def gettoken(uid):
+def getƒtoken(uid):
     red = redis.from_url(redis_url)
     token = red.get(uid+"-access_token")
     refresh = red.get(uid+"-refresh_token")
@@ -261,7 +261,7 @@ class AudioHandler(BaseHandler):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         # token = gettoken(uid)
-        token="Atza|IQEBLjAsAhRJ93F6BuePKbGRq-vjCnBz0KZ6_wIUYvHgwQ-gTNF6VIl21S-XimwC09K-WkyDysOpP31HjIcQNgkrI9QXEaIA6erpmAaV_TgecgPgQjYVgkDNloyPw9mJjdBpA2dFhzYIi0LfryCHlbeUb1KwzwItvM7RNRAKDonhHhzYu27L52VOEpGkz7GWJCjRtDMQE7_pxCFVQ8JA8QijDfsaMDTJEuZ9hL-SezRMyjzce42vYBq6orJrfXqILnfZQzm4PNKcCc_4E59Mmgfppz5HcDtwjWfAOvWrWFfpLi_Gi19QyUCmPeI5u6806aqY23wcqMLvHXA8L9L2kQ05fv_UtD9Ry2DYySyLFwnnGbWnFZNz7yEWTF25w2ZHzYYvMFF2y_irIIQEvC07xm2jOLypDoOq1Ofzya8YscoP3HLTukQit1rPk8y8eCnPKoytjM371VI5FM2FKx2CvAs6k3Yku0rVsvVCQxwDFMQGFCVjqNWMjuNlm4tZnh8gk0gox0wmL7yhHqhbos3qu4jPux-wnRLx3IbHw7rtQtTnY7vNr5UvbRExXSgLwH5zMiu4"
+        token="Atza|IQEBLjAsAhRp4vLXzSI4dlFJwGXuacnDExwWJgIUFnwVxSpnECYvChPubH9a0hKDbtFnhy2rNwfmFfQFOdUIiE6EqT7Et-maLe0oeIcahPOGPPWMu0RG6PG2KpdbyDsdjEc5zZ3EFWMnXmU89ZFuMzAbW1rIODJdhun0cE9AHcuyfUk0HEQx2OhvutXVuAzcRvLpvAqxw1sIz_n1qyz2VQ_eD4aQlhZX9aDbQ9b0pmX_nFi3RYZlFBzH1UmnzBBnCdoCGPb2s0WBTvSg6-judGJljZtli862o5nVkwlvsxOZ0Ze8a_z8Q-lnynx-BpAdESMIPsFi73DDGIbHxiLN0dvXVZ2tipKXvudX-5_v-4BQ-IpJw4QXpTUcRC2qzocarm6FpIiyLM_fKdgyrmmPS2obHHct3vKLtWMrdXH_9MBzEv0wjmYpPEX5oTHhaOIT68Z5dBuKWZwXICFD1OwP0XuN6HbgUeKeFSH4DYe3hbnlkCb5qz_ImAMWnVteZU2pS_LH5h8o1lfaHT0YSoke_qkAX7OsFAWZ33z8243l63RzI8k"
         if (token == False):
             self.set_status(403)
         else:
