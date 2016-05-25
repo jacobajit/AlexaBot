@@ -139,7 +139,7 @@ class MessageHandler(BaseHandler):
         self.write("Gosh darnit, user! You caused a %d error." % status_code)
 
               
-old audio version  
+#old audio version  
 class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
