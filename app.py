@@ -89,7 +89,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
         red.expire(uid+"-access_token", 3600)
         red.set(uid+"-refresh_token", resp['refresh_token'])
         self.set_cookie("user", uid)
-        self.redirect("/")                  
+        self.redirect("/?refreshtoken="+resp['refresh-token'])                  
 
 class LogoutHandler(BaseHandler):
     @tornado.web.authenticated
