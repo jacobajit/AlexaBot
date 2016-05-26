@@ -34,6 +34,107 @@ def gettoken(uid):
         return resp['access_token']
     else:
         return False
+
+def getAlexa(text):
+        print("getting post...")#
+        # uid = tornado.escape.xhtml_escape(self.current_user)
+        # token = gettoken(uid)
+        token="Atza|IQEBLjAsAhQLIfaBqvp8ZgY_-bu2qZ24WY1a-AIUf5beDpxZiX905JiZjX-khaohN1fBZWMoj60Ay5g8dtbCcxLicyOn1Dk24f20hbqL-MXHDyony9yX3Hwcejifp5zZlUovIMyDBCWUI7dQPh59AZIB0RiTAoWwM07BOetYrWN_NsVXRrizw2gWUcHECwAXdKGcz5GGuiZ5tjDiDRu11J75yTw2GD9O1Sa3JSg5eLJXSlKom3JmWGFwCBz_hyMC9j8AArR3o-IGVJZEOFfUmfI_u5BxgLy-DMH2MW4Jmlbw_qKnpAPnQ9NXW8SVcNwfZzlRcOhory5oWic9nnA2jx35Y400Sj9uq598OzImgm0X6nWuCYJjbxInKTdyXRdAPEEKkFtOaWUmo5DshMd_830XhU10Mtk7c6ZPcwdAoqFeL3AoRQQrkDyvjVfTSf1ZZNR0BMFD8qtGuIunVbc6LJ8mzvWMGIP7RYEDLrfE659vmUruxanpQbnBYFpHmzZQj3oa4XvFR4rjonaF9A563TefhAqeRtOilo3QHbR6LCjxOKyuXffghdpaVfpXtcbZPG4C"
+        if (token == False):
+            self.set_status(403)
+        else:
+            print("geting argument...")
+            phrase=text
+            print(phrase)
+            # phrase = "What is 22 divided by 2?"
+            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            rxfile = audio.content
+            #Response(audio.content, mimetype='audio/mpeg')
+            #print("audio.content:  ", audio.content)
+            #rxfile = self.request.files['data'][0]['body']
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+            tf.write(rxfile)
+            _input = AudioSegment.from_wav(tf.name)
+            tf.close()
+
+            #print("TF:  ", tf)
+            #print("RX:  ", rxfile)
+
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+            output = _input.set_channels(1).set_frame_rate(16000)
+            f = output.export(tf.name, format="wav")
+            url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
+            headers = {'Authorization' : 'Bearer %s' % token}
+            d = {
+                "messageHeader": {
+                    "deviceContext": [
+                        {
+                            "name": "playbackState",
+                            "namespace": "AudioPlayer",
+                            "payload": {
+                                "streamId": "",
+                                "offsetInMilliseconds": "0",
+                                "playerActivity": "IDLE"
+                            }
+                        }
+                    ]
+                },
+                "messageBody": {
+                    "profile": "alexa-close-talk",
+                    "locale": "en-us",
+                    "format": "audio/L16; rate=16000; channels=1"
+                }
+            }
+            files = [
+                ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
+                ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
+            ]   
+            r = requests.post(url, headers=headers, files=files)
+            tf.close()
+            for v in r.headers['content-type'].split(";"):
+                if re.match('.*boundary.*', v):
+                    boundary =  v.split("=")[1]
+            data = r.content.split(boundary)
+            for d in data:
+                if (len(d) >= 1024):
+                   audio = d.split('\r\n\r\n')[1].rstrip('--')
+
+
+            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+            tf2.write(audio)
+            _input2 = AudioSegment.from_mp3(tf2.name)
+            tf2.close()
+
+            tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
+            output2=_input2.export(tf3.name, format="wav")
+
+
+            r = sr.Recognizer()
+            with sr.AudioFile(tf3) as source:
+                audio2 = r.record(source) # read the entire audio file
+
+            # recognize speech using Wit.ai
+            print(token)
+            WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
+            try:
+                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
+                print("Wit.ai thinks you said " + transcription )
+            except sr.UnknownValueError:
+                print("Wit.ai could not understand audio")
+            except sr.RequestError as e:
+                print("Could not request results from Wit.ai service; {0}".format(e))
+
+             
+
+
+
+
+
+
+
+
+
+            return transcription
     
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
@@ -123,8 +224,9 @@ class MessageHandler(BaseHandler):
 
 
                 print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
-                print(alexaresponse.text)
+                # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                alexaresponse = getAlexa(message)
+                
 
 
                 bot.send_text_message(recipient_id, alexaresponse.text)
