@@ -146,8 +146,7 @@ class MainHandler(BaseHandler):
     @tornado.web.asynchronous
     def get(self):
         self.set_header('Content-Type', 'text/plain')
-        self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False)
-            +"\n\n"+self.get_argument("accesstoken", default=None, strip=False))
+        self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
         self.finish()
 
 
@@ -189,7 +188,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
         red.expire(uid+"-access_token", 3600)
         red.set(uid+"-refresh_token", resp['refresh_token'])
         self.set_cookie("user", uid)
-        self.redirect("/?refreshtoken="+resp['refresh_token']+"&accesstoken="+resp['access_token'])                  
+        self.redirect("/?refreshtoken="+resp['refresh_token'])                  
 
 class LogoutHandler(BaseHandler):
     @tornado.web.authenticated
