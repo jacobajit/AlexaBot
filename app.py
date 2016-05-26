@@ -223,15 +223,19 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
 
-
-                print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
-                alexaresponse = getAlexa(message)
+                red = redis.from_url(redis_url)
+                if not red.exists(recipient_id+"-refresh_token"):
+                    print("New user")
+                    bot.send_text_message("Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                else:
+                    print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                    # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                    alexaresponse = getAlexa(message)
                 
 
 
-                # bot.send_text_message(recipient_id, alexaresponse.text)
-                bot.send_text_message(recipient_id, alexaresponse)
+                    # bot.send_text_message(recipient_id, alexaresponse.text)
+                    bot.send_text_message(recipient_id, alexaresponse)
             else:
                 pass
         self.set_status(200)
