@@ -39,7 +39,7 @@ def getAlexa(text):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         # token = gettoken(uid)
-        token="Atza|IQEBLjAsAhQ1O1JJR7pESqfabkT4fkzeesVkcQIUT7DfZ8WPTYOB9wCT0TtFqaIAA564oqeYwQkk2UtgcfxSyxZ8pX5i2nITxzWCOYCXVglppxgXlvWqR1Ub84UYnNE_5KEHIqD0Fl3J69UoAGLN6pMG1i8G5ZB4FESUtg4M5QAMqB_1hjvhdHOtGa97_gIJTMkD64YQRok8zAHfD0F99ZQfDHVsPQTMhE0hoqXyVLgsg5S96kC3jNVCD6uDQSkW3n5uqD7c-jcCjFD9hBuSZmMz0YUUReulqeEZRUi0HxTeDR6gRSmQ39SNQ3xygUlKuDlw-wC9tGSpfnSeGfAMgnSirsiI4ECESWFqL_ez1ymxyHSNtx8zzN_JKCp58hd0kB0dt-Wk4eXTRg-HLu5JBv7-auuXRIx_M4QM5SLFlmISn9z168JMorMaeuQRpyFmIUj2Zve7b62ce2M1z-18wD41wlD7n5XhqRCfPjFR821zDysknZr-0gyqbliXzomsoiD_GAyLg-UBzRhFEM6W_oBU9Q"
+        token="Atza|IQEBLjAsAhQxwakCpRs_t1qeWbzs5XAf8Nrr4AIUHhLIh67r14sGizgJIMKC-H0aMl1Lvsw9ZdjwjVbCk73U29aiq7ZvdLc4RTsPQZw-n6zxeKhZhp3tLaTB-qlXGmhQj4O494E5yK_7baJNfY_g9YK8dEBIDI2Ay9jKtngNQE7htdo-Z2fkV9DYdp1Ur0Vnsi-ZttAmFWObSDBSe8UI_Hsv3_ElXyN7qRDW5L0Klckzy5ccW_VNbFbWyjETsyzVoHespk5E8BP8E-jWBZEtfllZaTO60pnnXa0l4y4rJ7vjUpyRhF42PGsB9GqcVfgWqfHERX01ssmxn_j_pxiJd-yJD1JTE7XtNXjU6exFhuO7XP00246KwEO1KJyk5feJjg_0gGpOr7LGmbv9KcvHOY5zifVdd1aYIcre3ZytnSGq1osE_yeikhUkpOHFacSMKAcO9z9Y_FALVyIuXPCqyKKi_vgOnOXaL7ux9fshIebKagfpcSNx84nb1AA9Qb8IAi-rt1hdW8QJD_82Ttbz1bf8PQ"
         if (token == False):
             self.set_status(403)
         else:
