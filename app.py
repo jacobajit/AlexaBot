@@ -226,7 +226,7 @@ class MessageHandler(BaseHandler):
                 red = redis.from_url(redis_url)
                 if not red.exists(recipient_id+"-refresh_token"):
                     print("New user")
-                    bot.send_text_message("Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                    bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
                 else:
                     print("Getting Alexa's response from AudioHandler. Message was: "+message)
                     # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
