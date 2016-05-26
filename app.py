@@ -44,10 +44,8 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        f = open('static/index.html', 'r')
-        resp = f.read()
-        f.close()
-        self.write(resp)
+        self.set_header('Content-Type', 'text/plain')
+        self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
         self.finish()
 
 
