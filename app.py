@@ -230,7 +230,8 @@ class MessageHandler(BaseHandler):
                 
 
 
-                bot.send_text_message(recipient_id, alexaresponse.text)
+                # bot.send_text_message(recipient_id, alexaresponse.text)
+                bot.send_text_message(recipient_id, alexaresponse)
             else:
                 pass
         self.set_status(200)
