@@ -26,13 +26,18 @@ def gettoken(uid):
     if token:
         return token
     elif refresh:
-        payload = {"client_id" : Client_ID, "client_secret" : Client_Secret, "refresh_token" : refresh, "grant_type" : "refresh_token", }
-        url = "https://api.amazon.com/auth/o2/token"
-        r = requests.post(url, data = payload)
-        resp = json.loads(r.text)
-        red.set(uid+"-access_token", resp['access_token'])
-        red.expire(uid+"-access_token", 3600)
-        return resp['access_token']
+        #good refresh token
+        try:
+            payload = {"client_id" : Client_ID, "client_secret" : Client_Secret, "refresh_token" : refresh, "grant_type" : "refresh_token", }
+            url = "https://api.amazon.com/auth/o2/token"
+            r = requests.post(url, data = payload)
+            resp = json.loads(r.text)
+            red.set(uid+"-access_token", resp['access_token'])
+            red.expire(uid+"-access_token", 3600)
+            return resp['access_token']
+        #bad refresh token
+        except:
+            return False
     else:
         return False
 
@@ -42,8 +47,11 @@ def getAlexa(text,mid):
         token = gettoken(mid)
         #token="Atza|IQEBLjAsAhQxwakCpRs_t1qeWbzs5XAf8Nrr4AIUHhLIh67r14sGizgJIMKC-H0aMl1Lvsw9ZdjwjVbCk73U29aiq7ZvdLc4RTsPQZw-n6zxeKhZhp3tLaTB-qlXGmhQj4O494E5yK_7baJNfY_g9YK8dEBIDI2Ay9jKtngNQE7htdo-Z2fkV9DYdp1Ur0Vnsi-ZttAmFWObSDBSe8UI_Hsv3_ElXyN7qRDW5L0Klckzy5ccW_VNbFbWyjETsyzVoHespk5E8BP8E-jWBZEtfllZaTO60pnnXa0l4y4rJ7vjUpyRhF42PGsB9GqcVfgWqfHERX01ssmxn_j_pxiJd-yJD1JTE7XtNXjU6exFhuO7XP00246KwEO1KJyk5feJjg_0gGpOr7LGmbv9KcvHOY5zifVdd1aYIcre3ZytnSGq1osE_yeikhUkpOHFacSMKAcO9z9Y_FALVyIuXPCqyKKi_vgOnOXaL7ux9fshIebKagfpcSNx84nb1AA9Qb8IAi-rt1hdW8QJD_82Ttbz1bf8PQ"
         if (token == False):
-            self.set_status(403)
+            red = redis.from_url(redis_url)
+            red.delete(recipient_id+"-refresh_token"):
+            return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://helloalexa.herokuapp.com/start and come back with your code."
         else:
+
             print("geting argument...")
             phrase=text
             print(phrase)
