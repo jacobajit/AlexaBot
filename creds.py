@@ -1,3 +1,5 @@
+import os
+
 #Alexa
 Security_Profile_Description = os.environ['SECURITY_PROFILE_DESCRIPTION']
 Security_Profile_ID  = os.environ['SECURITY_PROFILE_ID']
