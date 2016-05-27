@@ -10,6 +10,7 @@ import re
 import tempfile
 import redis
 import uuid
+import string
 from pydub import AudioSegment
 import speech_recognition as sr
 from pymessenger.bot import Bot
