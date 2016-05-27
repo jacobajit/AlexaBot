@@ -16,7 +16,8 @@ import speech_recognition as sr
 from pymessenger.bot import Bot
 
 
-TOKEN = "EAAJPHXpVWQIBAMXZC5aDFfQuCUUQfHIm65ccxiN39ymIz7haOVIpxFVqWsP5QviRZAc4xMdCvReTl2nzSikctr9ZAskZAABxzNpWZCCAeosR1mmsbqZBkpoZAbQNj9qdwD3PbxGowNNvGrTmqZBqFH5i6uSCF6aSDc0kaU1rM6RZCDAZDZD"
+
+TOKEN= Facebook_Token
 bot = Bot(TOKEN)
     
 def gettoken(uid):
@@ -129,7 +130,7 @@ def getAlexa(text,mid):
 
                 # recognize speech using Wit.ai
                 print(token)
-                WIT_AI_KEY = "ACGKCNOEUUXXHU3Q2SOMVCZW3MQMYUNW" # Wit.ai keys are 32-character uppercase alphanumeric strings
+                WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
                 try:
                     transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
                     print("Wit.ai thinks you said " + transcription )
