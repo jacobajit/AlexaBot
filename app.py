@@ -47,10 +47,10 @@ def getAlexa(text,mid):
             print("geting argument...")
             phrase=text
             print(phrase)
-            exclude = set(string.punctuation)
-            phrase = ''.join(ch for ch in phrase if ch not in exclude)
-            if (phrase != ""):
-
+            # exclude = set(string.punctuation)
+            # phrase = ''.join(ch for ch in phrase if ch not in exclude)
+            # if (phrase != ""):
+            try:
                 # phrase = "What is 22 divided by 2?"
                 audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
                 rxfile = audio.content
@@ -99,6 +99,7 @@ def getAlexa(text,mid):
                 for v in r.headers['content-type'].split(";"):
                     if re.match('.*boundary.*', v):
                         boundary =  v.split("=")[1]
+
                 data = r.content.split(boundary)
                 for d in data:
                     if (len(d) >= 1024):
@@ -140,7 +141,7 @@ def getAlexa(text,mid):
 
 
                 return transcription
-            else:
+            except:
                 return "Sorry, we couldn't understand your message."
     
 class BaseHandler(tornado.web.RequestHandler):
