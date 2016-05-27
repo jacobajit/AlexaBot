@@ -48,8 +48,8 @@ def getAlexa(text,mid):
             phrase=text
             print(phrase)
             exclude = set(string.punctuation)
-            phrase = ''.join(ch for ch in s if ch not in exclude)
-            if (phrase!=""):
+            phrase = ''.join(ch for ch in phrase if ch not in exclude)
+            if (phrase != ""):
 
                 # phrase = "What is 22 divided by 2?"
                 audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
