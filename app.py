@@ -376,7 +376,7 @@ class AudioHandler(BaseHandler):
             phrase=self.get_argument("text", default=None, strip=False)
             print(phrase)
             # phrase = "What is 22 divided by 2?"
-            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
             #Response(audio.content, mimetype='audio/mpeg')
             #print("audio.content:  ", audio.content)
