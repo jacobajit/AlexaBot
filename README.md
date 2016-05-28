@@ -4,6 +4,6 @@ With Amazon Alexa as a Facebook contact, you can quietly message Alexa and ask h
 
 To fork, obtain the credentials required in creds.py (stored in Heroku in this case). Requirements are in requirements.txt. Python, Redis required. FFMPEG required.
 
-![alt tag](https://scontent-iad3-1.xx.fbcdn.net/t31.0-8/13254944_960071984112229_6094048875208261512_o.jpg)
+![alt tag](https://lh3.googleusercontent.com/44PtdZRhTbGQWKsUC3umjrNBPRhB_RNdmN6DvSeRrQSUjXklMp7xY6VHEDO-dAaOWDSgdvDZNK0WTpgkLAxKQRkBBdJLgsX9PsSlEj-TC0wndWpl6mluee-BRCVZT6AHb3KKOy9H2SUc2DzXfMjjZTMtxEdsecBpYeoWm92hjDJnz1vfOUOjpSXGeGMm9VIqS3KR2gtIZjV4Dqpsr8hmXJNZQyAv8V5YDX-D1V2zUUsTejSz6RKoNPRtF5OIO-z5f4Vui-aLYWOELHc-VYdw0n4TFoJNXjm39XcgFZb7VQT31GuXtO64qlROIW8IwMOkZ4kDiV3X58TonfSQTjV514qnyBBTbJxV0RypV3d19JLr-DH21IFgn2ZTJLDpWn1c16sUubyRnU1JQ_Gx9sMlmnzJxTVg5NDPee2sLKw_IKdxpkwt1eGbnBWCxvw3TzJKjIWkUGkztR_yOBdF0Yo7BPNH4mpq0Vf3q87ajZcnRy6f4bcztBXdi-4sspi7fjosy5O_CQ_oxh5rEJn2n0HeWWzFFSvrBfi71wHP2pGwN6fIJHRqRNI4IRSG9AfKoP-Z5fse58jHIiaE0FQQkCKlj2LzRP_MGGE=w674-h1198-no)
 
 
