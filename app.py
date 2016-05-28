@@ -42,6 +42,7 @@ def gettoken(uid):
     else:
         return False
 
+#function version of getting Alexa's response in text
 def getAlexa(text,mid):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
@@ -59,99 +60,89 @@ def getAlexa(text,mid):
             # exclude = set(string.punctuation)
             # phrase = ''.join(ch for ch in phrase if ch not in exclude)
             # if (phrase != ""):
-            try:
-                # phrase = "What is 22 divided by 2?"
-                audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-                rxfile = audio.content
-                #Response(audio.content, mimetype='audio/mpeg')
-                #print("audio.content:  ", audio.content)
-                #rxfile = self.request.files['data'][0]['body']
-                tf = tempfile.NamedTemporaryFile(suffix=".wav")
-                tf.write(rxfile)
-                _input = AudioSegment.from_wav(tf.name)
-                tf.close()
 
-                #print("TF:  ", tf)
-                #print("RX:  ", rxfile)
+            # phrase = "What is 22 divided by 2?"
+            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            rxfile = audio.content
+            #Response(audio.content, mimetype='audio/mpeg')
+            #print("audio.content:  ", audio.content)
+            #rxfile = self.request.files['data'][0]['body']
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+            tf.write(rxfile)
+            _input = AudioSegment.from_wav(tf.name)
+            tf.close()
 
-                tf = tempfile.NamedTemporaryFile(suffix=".wav")
-                output = _input.set_channels(1).set_frame_rate(16000)
-                f = output.export(tf.name, format="wav")
-                url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
-                headers = {'Authorization' : 'Bearer %s' % token}
-                d = {
-                    "messageHeader": {
-                        "deviceContext": [
-                            {
-                                "name": "playbackState",
-                                "namespace": "AudioPlayer",
-                                "payload": {
-                                    "streamId": "",
-                                    "offsetInMilliseconds": "0",
-                                    "playerActivity": "IDLE"
-                                }
+            #print("TF:  ", tf)
+            #print("RX:  ", rxfile)
+
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+            output = _input.set_channels(1).set_frame_rate(16000)
+            f = output.export(tf.name, format="wav")
+            url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
+            headers = {'Authorization' : 'Bearer %s' % token}
+            d = {
+                "messageHeader": {
+                    "deviceContext": [
+                        {
+                            "name": "playbackState",
+                            "namespace": "AudioPlayer",
+                            "payload": {
+                                "streamId": "",
+                                "offsetInMilliseconds": "0",
+                                "playerActivity": "IDLE"
                             }
-                        ]
-                    },
-                    "messageBody": {
-                        "profile": "alexa-close-talk",
-                        "locale": "en-us",
-                        "format": "audio/L16; rate=16000; channels=1"
-                    }
+                        }
+                    ]
+                },
+                "messageBody": {
+                    "profile": "alexa-close-talk",
+                    "locale": "en-us",
+                    "format": "audio/L16; rate=16000; channels=1"
                 }
-                files = [
-                    ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
-                    ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
-                ]   
-                r = requests.post(url, headers=headers, files=files)
-                tf.close()
-                for v in r.headers['content-type'].split(";"):
-                    if re.match('.*boundary.*', v):
-                        boundary =  v.split("=")[1]
+            }
+            files = [
+                ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
+                ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
+            ]   
+            r = requests.post(url, headers=headers, files=files)
+            tf.close()
+            for v in r.headers['content-type'].split(";"):
+                if re.match('.*boundary.*', v):
+                    boundary =  v.split("=")[1]
 
-                data = r.content.split(boundary)
-                for d in data:
-                    if (len(d) >= 1024):
-                       audio = d.split('\r\n\r\n')[1].rstrip('--')
-
-
-                tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
-                tf2.write(audio)
-                _input2 = AudioSegment.from_mp3(tf2.name)
-                tf2.close()
-
-                tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
-                output2=_input2.export(tf3.name, format="wav")
+            data = r.content.split(boundary)
+            for d in data:
+                if (len(d) >= 1024):
+                   audio = d.split('\r\n\r\n')[1].rstrip('--')
 
 
-                r = sr.Recognizer()
-                with sr.AudioFile(tf3) as source:
-                    audio2 = r.record(source) # read the entire audio file
+            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+            tf2.write(audio)
+            _input2 = AudioSegment.from_mp3(tf2.name)
+            tf2.close()
 
-                # recognize speech using Wit.ai
-                print(token)
-                WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
-                try:
-                    transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                    print("Wit.ai thinks you said " + transcription )
-                except sr.UnknownValueError:
-                    print("Wit.ai could not understand audio")
-                except sr.RequestError as e:
-                    print("Could not request results from Wit.ai service; {0}".format(e))
-
-                 
+            tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
+            output2=_input2.export(tf3.name, format="wav")
 
 
+            r = sr.Recognizer()
+            with sr.AudioFile(tf3) as source:
+                audio2 = r.record(source) # read the entire audio file
+
+            # recognize speech using Wit.ai
+            print(token)
+            WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
+            try:
+                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
+                print("Wit.ai thinks you said " + transcription )
+            except sr.UnknownValueError:
+                print("Wit.ai could not understand audio")
+            except sr.RequestError as e:
+                print("Could not request results from Wit.ai service; {0}".format(e))
 
 
+            return transcription
 
-
-
-
-
-                return transcription
-            except:
-                return "Sorry, we couldn't understand your message."
     
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
@@ -223,9 +214,7 @@ class LogoutHandler(BaseHandler):
 class MessageHandler(BaseHandler):
     @tornado.web.asynchronous
     def get(self):
-        print("here")
         if (self.get_argument("hub.verify_token", default=None, strip=False) == "my_voice_is_my_password_verify_me"):
-            print("yes")
             self.set_header('Content-Type', 'text/plain')
             self.write(self.get_argument("hub.challenge", default=None, strip=False))
             self.finish()
@@ -238,30 +227,27 @@ class MessageHandler(BaseHandler):
             if (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
-
-                red = redis.from_url(redis_url)
-                if not red.exists(recipient_id+"-refresh_token"):
-                    print("Received refresh token")
-                    red.set(recipient_id+"-refresh_token", message)
-                    testing=gettoken(recipient_id)
-                    if(testing==False):
-                        red.delete(recipient_id+"-refresh_token")
-                        bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
+                try:
+                    red = redis.from_url(redis_url)
+                    if not red.exists(recipient_id+"-refresh_token"):
+                        print("Received refresh token")
+                        red.set(recipient_id+"-refresh_token", message)
+                        testing=gettoken(recipient_id)
+                        if(testing==False):
+                            red.delete(recipient_id+"-refresh_token")
+                            bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
+                        else:
+                            bot.send_text_message(recipient_id, "Great, you are logged in. Start talking to Alexa!")
+                        #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
                     else:
-                        bot.send_text_message(recipient_id, "Great, you are logged in. Start talking to Alexa!")
-                    #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
-                else:
-                    try:
+                        
                         print("Getting Alexa's response from AudioHandler. Message was: "+message)
                         # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
                         alexaresponse = getAlexa(message,recipient_id)
-                    
-
-
                         # bot.send_text_message(recipient_id, alexaresponse.text)
                         bot.send_text_message(recipient_id, alexaresponse)
-                    except:
-                        bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
+                except:
+                    bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
             else:
                 pass
         self.set_status(200)
@@ -289,16 +275,11 @@ class AudioHandler(BaseHandler):
             # phrase = "What is 22 divided by 2?"
             audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
-            #Response(audio.content, mimetype='audio/mpeg')
-            #print("audio.content:  ", audio.content)
-            #rxfile = self.request.files['data'][0]['body']
+
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             tf.write(rxfile)
             _input = AudioSegment.from_wav(tf.name)
             tf.close()
-
-            #print("TF:  ", tf)
-            #print("RX:  ", rxfile)
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
@@ -364,18 +345,6 @@ class AudioHandler(BaseHandler):
             except sr.RequestError as e:
                 print("Could not request results from Wit.ai service; {0}".format(e))
 
-             
-
-
-
-
-
-
-
-
-
-            # self.set_header('Content-Type', 'audio/mpeg')
-            # self.write(audio)
 
             self.set_header('Content-Type', 'text/plain')
             self.write(transcription)
