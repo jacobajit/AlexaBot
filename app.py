@@ -251,14 +251,17 @@ class MessageHandler(BaseHandler):
                         bot.send_text_message(recipient_id, "Great, you are logged in. Start talking to Alexa!")
                     #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
                 else:
-                    print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                    # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
-                    alexaresponse = getAlexa(message,recipient_id)
-                
+                    try:
+                        print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                        # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                        alexaresponse = getAlexa(message,recipient_id)
+                    
 
 
-                    # bot.send_text_message(recipient_id, alexaresponse.text)
-                    bot.send_text_message(recipient_id, alexaresponse)
+                        # bot.send_text_message(recipient_id, alexaresponse.text)
+                        bot.send_text_message(recipient_id, alexaresponse)
+                    except:
+                        bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
             else:
                 pass
         self.set_status(200)
