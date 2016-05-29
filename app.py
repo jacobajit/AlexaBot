@@ -62,7 +62,7 @@ def getAlexa(text,mid):
             # if (phrase != ""):
 
             # phrase = "What is 22 divided by 2?"
-            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            audio = requests.get('http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q='+phrase+'&tl=En-us')
             rxfile = audio.content
             #Response(audio.content, mimetype='audio/mpeg')
             #print("audio.content:  ", audio.content)
