@@ -47,7 +47,7 @@ def getAlexa(text,mid):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         token = gettoken(mid)
-        #token="Atza|IQEBLjAsAhQxwakCpRs_t1qeWbzs5XAf8Nrr4AIUHhLIh67r14sGizgJIMKC-H0aMl1Lvsw9ZdjwjVbCk73U29aiq7ZvdLc4RTsPQZw-n6zxeKhZhp3tLaTB-qlXGmhQj4O494E5yK_7baJNfY_g9YK8dEBIDI2Ay9jKtngNQE7htdo-Z2fkV9DYdp1Ur0Vnsi-ZttAmFWObSDBSe8UI_Hsv3_ElXyN7qRDW5L0Klckzy5ccW_VNbFbWyjETsyzVoHespk5E8BP8E-jWBZEtfllZaTO60pnnXa0l4y4rJ7vjUpyRhF42PGsB9GqcVfgWqfHERX01ssmxn_j_pxiJd-yJD1JTE7XtNXjU6exFhuO7XP00246KwEO1KJyk5feJjg_0gGpOr7LGmbv9KcvHOY5zifVdd1aYIcre3ZytnSGq1osE_yeikhUkpOHFacSMKAcO9z9Y_FALVyIuXPCqyKKi_vgOnOXaL7ux9fshIebKagfpcSNx84nb1AA9Qb8IAi-rt1hdW8QJD_82Ttbz1bf8PQ"
+        #token=""
         if (token == False):
             red = redis.from_url(redis_url)
             red.delete(mid+"-refresh_token")
