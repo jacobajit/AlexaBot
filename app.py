@@ -234,7 +234,7 @@ class MessageHandler(BaseHandler):
                     print("Generating login link...")
                     link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
                     messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
-                    payload = {"recipient": {"id": recipient_id}, "message": messageData}
+                    payload = {"recipient": recipient_id, "message": messageData}
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, params=payload)
                     print(r.text)
                     print("Made post request")
