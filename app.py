@@ -230,7 +230,7 @@ class MessageHandler(BaseHandler):
                 recipient_id = x['sender']['id']
                 try:
                     red = redis.from_url(redis_url)
-                    if(message=="AUTH"):
+                    if message=="AUTH":
                         print("Generating login link...")
                         link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
                         bot.send_text_message(recipient_id, "Log into Amazon at "+link)
