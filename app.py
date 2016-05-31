@@ -186,6 +186,8 @@ class CodeAuthHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         code=self.get_argument("code")
+        mid=self.get_cookie("user")
+        print("fetched MID: ",mid)
         path = "https" + "://" + self.request.host 
         callback = path+"/code"
         payload = {"client_id" : Client_ID, "client_secret" : Client_Secret, "code" : code, "grant_type" : "authorization_code", "redirect_uri" : callback }
@@ -194,10 +196,9 @@ class CodeAuthHandler(tornado.web.RequestHandler):
         uid = str(uuid.uuid4())
         red = redis.from_url(redis_url)
         resp = json.loads(r.text)
-        red.set(uid+"-access_token", resp['access_token'])
-        red.expire(uid+"-access_token", 3600)
-        red.set(uid+"-refresh_token", resp['refresh_token'])
-        self.set_cookie("user", uid)
+        red.set(mid+"-access_token", resp['access_token'])
+        red.expire(mid+"-access_token", 3600)
+        red.set(mid+"-refresh_token", resp['refresh_token'])
         self.redirect("/?refreshtoken="+resp['refresh_token'])                  
 
 class LogoutHandler(BaseHandler):
