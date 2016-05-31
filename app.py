@@ -249,6 +249,7 @@ class MessageHandler(BaseHandler):
                             }
                         }'
                     requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, params={"recipient": {"id":recipient_id}, "message": messageData})
+                    print("Made post request")
                     #bot.send_text_message(recipient_id, "Log into Amazon at "+link)
             elif (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
