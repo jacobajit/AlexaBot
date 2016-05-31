@@ -247,6 +247,7 @@ class MessageHandler(BaseHandler):
                                     }]
                                 }
                             }
+                        }
                             requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, data={"recipient": {"id":recipient_id}, "message": messageData})
 
                     #bot.send_text_message(recipient_id, "Log into Amazon at "+link)
