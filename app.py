@@ -236,7 +236,8 @@ class MessageHandler(BaseHandler):
                     recipient = {"id": recipient_id}
                     messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
                     payload = {"recipient": recipient, "message": messageData}
-                    r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, params=payload)
+                    print("recipient:", recipient)
+                    r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                     print(r.text)
                     print("Made post request")
                     #bot.send_text_message(recipient_id, "Log into Amazon at "+link)
