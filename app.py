@@ -173,6 +173,7 @@ class StartAuthHandler(tornado.web.RequestHandler):
         url = "https://www.amazon.com/ap/oa"
         path = "https" + "://" + self.request.host 
         print("boo")
+        self.set_cookie("user", uid)
         callback = path + "/code"
         payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
         req = Request('GET', url, params=payload)
@@ -229,6 +230,10 @@ class MessageHandler(BaseHandler):
                 recipient_id = x['sender']['id']
                 try:
                     red = redis.from_url(redis_url)
+                    if(message=="AUTH"):
+                        print("Generating login link...")
+                        link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
+                        bot.send_text_message(recipient_id, "Log into Amazon at "+link)
                     if not red.exists(recipient_id+"-refresh_token"):
                         print("Received refresh token")
                         red.set(recipient_id+"-refresh_token", message)
