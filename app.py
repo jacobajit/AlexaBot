@@ -227,6 +227,7 @@ class MessageHandler(BaseHandler):
         for x in event:
             if (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
+                print("The message:", message)
                 recipient_id = x['sender']['id']
                 try:
                     red = redis.from_url(redis_url)
