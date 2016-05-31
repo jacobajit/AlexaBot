@@ -233,7 +233,25 @@ class MessageHandler(BaseHandler):
                 if payload=="AUTH":
                     print("Generating login link...")
                     link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
-                    bot.send_text_message(recipient_id, "Log into Amazon at "+link)
+                    messageData = {
+                            "attachment": {
+                                "type": "template",
+                                "payload": {
+                                    "template_type": "generic",
+                                    "elements": [{
+                                        "title": "Login to Amazon",
+                                        "buttons": [{
+                                            "type": "web_url",
+                                            "url": link,
+                                            "title": "Login"
+                                        }]
+                                    }]
+                                }
+                            }
+                        }
+                    requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, data={"recipient": {"id":recipient_id}, "message": messageData})
+
+                    #bot.send_text_message(recipient_id, "Log into Amazon at "+link)
             elif (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 print("The message:", message)
