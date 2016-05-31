@@ -226,17 +226,18 @@ class MessageHandler(BaseHandler):
         print("OUTPUT: ",output)
         event = output['entry'][0]['messaging']
         for x in event:
-            if (x.get('message') and x['message'].get('text')):
-                message = x['message']['text']
+            recipient_id = x['sender']['id']
+            if x.get('postback') and x['postback'].get('payload'):
                 payload = x['postback']['payload']
+                if payload=="AUTH":
+                    print("Generating login link...")
+                    link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
+                    bot.send_text_message(recipient_id, "Log into Amazon at "+link)
+            elif (x.get('message') and x['message'].get('text')):
+                message = x['message']['text']
                 print("The message:", message)
-                recipient_id = x['sender']['id']
                 try:
                     red = redis.from_url(redis_url)
-                    if payload=="AUTH":
-                        print("Generating login link...")
-                        link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
-                        bot.send_text_message(recipient_id, "Log into Amazon at "+link)
                     if not red.exists(recipient_id+"-refresh_token"):
                         print("Received refresh token")
                         red.set(recipient_id+"-refresh_token", message)
