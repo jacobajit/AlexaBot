@@ -226,8 +226,12 @@ class MessageHandler(BaseHandler):
         event = output['entry'][0]['messaging']
         for x in event:
             if (x.get('message') and x['message'].get('text')):
-                message = x['message']['text']
-                payload = x['postback']['payload']
+                if 'message' in x:
+                    message = x['message']['text']
+                    payload = None
+                else:
+                    payload = x['postback']['payload']
+                    message = None
                 print("The message:", message)
                 recipient_id = x['sender']['id']
                 try:
