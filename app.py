@@ -14,6 +14,7 @@ import string
 from pydub import AudioSegment
 import speech_recognition as sr
 from pymessenger.bot import Bot
+import traceback
 
 
 
@@ -59,7 +60,6 @@ def getAlexa(text,mid):
             print(phrase)
 
             audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-            print(audio)
             rxfile = audio.content
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
@@ -255,7 +255,9 @@ class MessageHandler(BaseHandler):
                         alexaresponse = getAlexa(message,recipient_id)
                         # bot.send_text_message(recipient_id, alexaresponse.text)
                         bot.send_text_message(recipient_id, alexaresponse)
-                except:
+                except Exception,err:
+                    print(traceback.format_exc())
+
                     bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
             else:
                 pass
