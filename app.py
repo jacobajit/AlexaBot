@@ -174,7 +174,8 @@ class StartAuthHandler(tornado.web.RequestHandler):
         url = "https://www.amazon.com/ap/oa"
         path = "https" + "://" + self.request.host 
         print("boo")
-        self.set_cookie("user", mid)
+        if mid != None:
+            self.set_cookie("user", mid)
         callback = path + "/code"
         payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
         req = Request('GET', url, params=payload)
@@ -187,19 +188,20 @@ class CodeAuthHandler(tornado.web.RequestHandler):
     def get(self):
         code=self.get_argument("code")
         mid=self.get_cookie("user")
-        print("fetched MID: ",mid)
         path = "https" + "://" + self.request.host 
         callback = path+"/code"
         payload = {"client_id" : Client_ID, "client_secret" : Client_Secret, "code" : code, "grant_type" : "authorization_code", "redirect_uri" : callback }
         url = "https://api.amazon.com/auth/o2/token"
         r = requests.post(url, data = payload)
-        uid = str(uuid.uuid4())
         red = redis.from_url(redis_url)
         resp = json.loads(r.text)
-        red.set(mid+"-access_token", resp['access_token'])
-        red.expire(mid+"-access_token", 3600)
-        red.set(mid+"-refresh_token", resp['refresh_token'])
-        self.redirect("/?refreshtoken="+resp['refresh_token'])                  
+        if mid != None:
+            print("fetched MID: ",mid)
+            red.set(mid+"-access_token", resp['access_token'])
+            red.expire(mid+"-access_token", 3600)
+            red.set(mid+"-refresh_token", resp['refresh_token'])
+        else:
+            self.redirect("/?refreshtoken="+resp['refresh_token'])                  
 
 class LogoutHandler(BaseHandler):
     @tornado.web.authenticated
