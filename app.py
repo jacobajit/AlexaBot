@@ -59,7 +59,7 @@ def getAlexa(text,mid):
             phrase=text
             print(phrase)
 
-            audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'wav', 'f': '16khz_16bit_mono'})
+            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
