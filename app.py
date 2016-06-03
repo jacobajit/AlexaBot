@@ -147,7 +147,7 @@ class MainHandler(BaseHandler):
     @tornado.web.asynchronous
     def get(self):
         self.set_header('Content-Type', 'text/plain')
-        loader = template.Loader("templates")
+        loader = tornado.template.Loader("templates")
         print(loader)
         self.write(loader.load("tokengenerator.html").generate(token=self.get_argument("refreshtoken", default=None, strip=False)))
         #self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
