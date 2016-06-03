@@ -146,8 +146,8 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        self.set_header('Content-Type', 'text/plain')
         print("Getting html...")
+        #self.set_header('Content-Type', 'text/plain')
         #with open("templates/tokengenerator.html", 'r') as tfile:
         #    t = tornado.template.Template(tfile.read())
         #print("Template:", t)
