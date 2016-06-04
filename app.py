@@ -2,6 +2,7 @@ import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+import tornado.template
 from creds import *
 from requests import Request
 import requests
@@ -145,8 +146,11 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
+        print("Getting html...")
         self.set_header('Content-Type', 'text/plain')
+        #self.render("static/tokengenerator.html", token=self.get_argument("refreshtoken"))
         self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
+        print("yay")
         self.finish()
 
 
@@ -165,13 +169,13 @@ class StartAuthHandler(tornado.web.RequestHandler):
         })
         url = "https://www.amazon.com/ap/oa"
         path = "https" + "://" + self.request.host 
-        print("boo")
         if mid != None:
             self.set_cookie("user", mid)
         callback = path + "/code"
         payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
         req = Request('GET', url, params=payload)
         p = req.prepare()
+        print("redirecting...")
         self.redirect(p.url)
 
 

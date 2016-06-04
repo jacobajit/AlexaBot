@@ -14,7 +14,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
                 "buttons":[
                   {
                     "type":"postback",
-                    "title":"Start Chatting",
+                    "title":"Get Started",
                     "payload":"AUTH"
                   }
                 ]
