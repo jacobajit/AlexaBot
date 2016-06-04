@@ -169,13 +169,13 @@ class StartAuthHandler(tornado.web.RequestHandler):
         })
         url = "https://www.amazon.com/ap/oa"
         path = "https" + "://" + self.request.host 
-        print("boo")
         if mid != None:
             self.set_cookie("user", mid)
         callback = path + "/code"
         payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
         req = Request('GET', url, params=payload)
         p = req.prepare()
+        print("redirecting...")
         self.redirect(p.url)
 
 
