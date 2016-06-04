@@ -369,7 +369,6 @@ class AudioHandler(BaseHandler):
 def main():
     settings = {
         "cookie_secret": "parisPOLANDbroadFENCEcornWOULD",
-        "login_url": "/static/welcome.html",
     }
     static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     application = tornado.web.Application([(r"/", MainHandler),
