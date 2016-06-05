@@ -4,17 +4,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
     </head>
     <body style="font-family:sans-serif;">
-        <header id="header" style="position:absolute;top:0;left:0;right:0;background-color:#3b5998;text-align:center;">
+        <header style="position:absolute;top:0;left:0;right:0;background-color:#3b5998;text-align:center;">
             <h1 style="color:white;">AlexaBot Token Generator</h1>
         </header>
-        <main id="main" style="width:60%;margin-left:auto;margin-right:auto;">
+        <main style="width:60%;margin-left:auto;margin-right:auto;margin-top:100px;">
             <p>Send the following token to AlexaBot in Messenger.</p>
-            <textarea id="token" style="readonly;width:100%;height:30%;margin-left:auto;margin-right:auto;">{{ token }}</textarea>
+            <textarea id="token" style="readonly;width:100%;height:30%;margin-left:auto;margin-right:auto;border:2px solid black;">{{ token }}</textarea>
             <br>
             <button id="copy" data-clipboard-target="#token">Copy to clipboard</button>
         </main>
         <script>
-            document.getElementById("main").style.marginTop = document.getElementById("header").style.height + 20 + "px";
             new Clipboard('#copy');
         </script>
     </body>
