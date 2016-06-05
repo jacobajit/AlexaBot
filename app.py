@@ -146,7 +146,6 @@ class MainHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        print("Getting html...")
         # self.set_header('Content-Type', 'text/plain')
         self.render("static/tokengenerator.html", token=self.get_argument("refreshtoken"))
         # self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
@@ -174,7 +173,6 @@ class StartAuthHandler(tornado.web.RequestHandler):
         payload = {"client_id" : Client_ID, "scope" : "alexa:all", "scope_data" : sd, "response_type" : "code", "redirect_uri" : callback }
         req = Request('GET', url, params=payload)
         p = req.prepare()
-        print("redirecting...")
         self.redirect(p.url)
 
 
@@ -196,6 +194,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
             red.expire(mid+"-access_token", 3600)
             red.set(mid+"-refresh_token", resp['refresh_token'])
             self.render("static/return.html")
+            bot.send_text_message(mid, "Great, you're logged in. Start talking to Alexa!")
         else:
             self.redirect("/?refreshtoken="+resp['refresh_token'])                  
 
@@ -250,7 +249,7 @@ class MessageHandler(BaseHandler):
                             red.delete(recipient_id+"-refresh_token")
                             bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
                         else:
-                            bot.send_text_message(recipient_id, "Great, you are logged in. Start talking to Alexa!")
+                            bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
                         #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
                     else:
                         
