@@ -195,6 +195,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
             red.set(mid+"-access_token", resp['access_token'])
             red.expire(mid+"-access_token", 3600)
             red.set(mid+"-refresh_token", resp['refresh_token'])
+            self.render("static/return.html")
         else:
             self.redirect("/?refreshtoken="+resp['refresh_token'])                  
 
