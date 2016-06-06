@@ -114,8 +114,20 @@ def getAlexa(text,mid):
             _input2 = AudioSegment.from_mp3(tf2.name)
             tf2.close()
 
+
+            #convert mp3 file to wav
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
             output2=_input2.export(tf3.name, format="wav")
+
+            #convert mp3 file to flac
+            flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
+            output3=_input2.export(flacfile.name, format="flac",bitrate="16k")
+            googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
+            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = flacfile.content, params=googlepayload)
+
+            googletranscription=json.loads(google)['result'][0]['alternative'][0]['transcript']
+            print(googletranscription)
+            
 
 
             r = sr.Recognizer()
