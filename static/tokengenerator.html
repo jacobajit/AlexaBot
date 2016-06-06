@@ -6,12 +6,12 @@
     </head>
     <body style="font-family:sans-serif;">
         <header style="position:absolute;top:0;left:0;right:0;background-color:#3b5998;text-align:center;">
-            <h1 style="color:white;">AlexaBot Token Generator</h1>
+            <h2 style="color:white;font-weight:normal;">AlexaBot Token Generator</h1>
         </header>
-        <main style="width:60%;margin-left:auto;margin-right:auto;margin-top:150px;">
+        <main style="width:80%;margin-left:auto;margin-right:auto;margin-top:150px;">
             <p>Send the following token to AlexaBot in Messenger.</p>
             <input id="token" type="text" value="{{ token }}" style="padding:7px 8px;border:1px solid grey;border-radius:5px;">
-            <span><button id="copy" data-clipboard-action="copy" data-clipboard-target="#token" style="margin-top:10px;"><img src="static/clippy.svg" alt="Copy to clipboard"></button></span>
+            <span><button id="copy" data-clipboard-action="copy" data-clipboard-target="#token" style="margin-top:10px;"><img src="/static/clippy.svg" alt="Copy to clipboard"></button></span>
         </main>
         <script>
             new Clipboard('#copy');
