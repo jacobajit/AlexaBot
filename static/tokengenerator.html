@@ -11,8 +11,10 @@
         <main style="width:90%;margin-left:auto;margin-right:auto;margin-top:150px;">
             <label for="token-inpt">Send the following token to AlexaBot in Messenger:</label>
             <br>
-            <input id="token" name="token-inpt" type="text" value="{{ token }}" style="height:1.5em;border:1px solid grey;border-radius:5px;">
-            <button id="copy" data-clipboard-action="copy" data-clipboard-target="#token" style="margin-top:10px;"><img src="/static/clippy.png" alt="Copy to clipboard" style="height:1.5em;"></button>
+            <div style="border:1px solid grey;border-radius:4px;">
+                <input id="token" name="token-inpt" type="text" value="{{ token }}" style="height:1.5em;width:100%;">
+                <button id="copy" data-clipboard-action="copy" data-clipboard-target="#token" style="margin-top:10px;"><img src="/static/clippy.png" alt="Copy to clipboard" style="line-height:1.5em;"></button>
+            </div>
         </main>
         <script>
             new Clipboard('#copy');
