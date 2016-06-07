@@ -73,6 +73,7 @@ def recognize_google(self, audio_data, key = None, language = "en-US", show_all 
         except URLError as e:
             raise RequestError("recognition connection failed: {0}".format(e.reason))
         response_text = response.read().decode("utf-8")
+        #.
 
         # ignore any blank blocks
         actual_result = []
