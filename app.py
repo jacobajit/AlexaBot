@@ -123,7 +123,7 @@ def getAlexa(text,mid):
             flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
             output3=_input2.export(flacfile.name, format="flac",bitrate="16k")
             googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
-            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = flacfile.content, params=googlepayload)
+            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = flacfile.read(), params=googlepayload)
 
             googletranscription=json.loads(google)['result'][0]['alternative'][0]['transcript']
             print(googletranscription)
