@@ -2,6 +2,15 @@
     <head>
         <title>AlexaBot Token Generator</title>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+        <style>
+            input, button {
+                font-size: inherit;
+                padding: .2em;
+                -moz-box-sizing: content-box;
+                -webkit-box-sizing: content-box;
+                box-sizing: content-box;
+            }
+        </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
     </head>
     <body style="font-family:sans-serif;">
@@ -13,7 +22,7 @@
             <br>
             <fieldset style="font-size:1em;padding:.5em;border-radius:1em;">
                 <input id="token" name="token-inpt" type="text" value="{{ token }}">
-                <button id="copy" data-clipboard-action="copy" data-clipboard-target="#token"><img src="/static/clippy.png" alt="Copy to clipboard"></button>
+                <button id="copy" data-clipboard-action="copy" data-clipboard-target="#token"><img src="/static/clippy.png" alt="Copy to clipboard" style="height:1em;"></button>
             </fieldset>
         </main>
         <script>
