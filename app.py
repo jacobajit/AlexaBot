@@ -117,7 +117,7 @@ def getAlexa(text,mid):
 
             #convert mp3 file to wav
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
-            output2=_input2.export(tf3.name, format="wav")
+            output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1"])
 
             #convert mp3 file to flac
             flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
@@ -125,7 +125,7 @@ def getAlexa(text,mid):
             googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
             flacdata=flacfile.read()
             print(flacdata)
-            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = flacdata, params=googlepayload, headers={"Content-Type": "audio/x-flac; rate=44100"})
+            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = tf3.read(), params=googlepayload, headers={"Content-Type": "audio/x-flac; rate=44100"})
 
             print(google)
             print(google.text)
