@@ -125,7 +125,7 @@ def getAlexa(text,mid):
             googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
             flacdata=flacfile.read()
             print(flacdata)
-            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = tf3.read(), params=googlepayload, headers={"Content-Type": "audio/x-flac; rate=44100"})
+            google = requests.post('https://www.google.com/speech-api/v2/recognize', data = tf3.read(), params=googlepayload, headers={"Content-Type": "audio/l16; rate=16000"})
 
             print(google)
             print(google.text)
