@@ -21,6 +21,81 @@ import traceback
 
 TOKEN= Facebook_Token
 bot = Bot(TOKEN)
+
+
+
+
+import io, os, subprocess, wave, aifc, base64
+import math, audioop, collections, threading
+import platform, stat, random, uuid
+import json
+
+try: # attempt to use the Python 2 modules
+    from urllib import urlencode
+    from urllib2 import Request, urlopen, URLError, HTTPError
+except ImportError: # use the Python 3 modules
+    from urllib.parse import urlencode
+    from urllib.request import Request, urlopen
+    from urllib.error import URLError, HTTPError
+
+
+
+def recognize_google(self, audio_data, key = None, language = "en-US", show_all = False):
+        """
+        Performs speech recognition on ``audio_data`` (an ``AudioData`` instance), using the Google Speech Recognition API.
+        The Google Speech Recognition API key is specified by ``key``. If not specified, it uses a generic key that works out of the box. This should generally be used for personal or testing purposes only, as it **may be revoked by Google at any time**.
+        To obtain your own API key, simply following the steps on the `API Keys <http://www.chromium.org/developers/how-tos/api-keys>`__ page at the Chromium Developers site. In the Google Developers Console, Google Speech Recognition is listed as "Speech API".
+        The recognition language is determined by ``language``, an RFC5646 language tag like ``"en-US"`` (US English) or ``"fr-FR"`` (International French), defaulting to US English. A list of supported language values can be found in this `StackOverflow answer <http://stackoverflow.com/a/14302134>`__.
+        Returns the most likely transcription if ``show_all`` is false (the default). Otherwise, returns the raw API response as a JSON dictionary.
+        Raises a ``speech_recognition.UnknownValueError`` exception if the speech is unintelligible. Raises a ``speech_recognition.RequestError`` exception if the speech recognition operation failed, if the key isn't valid, or if there is no internet connection.
+        """
+        assert isinstance(audio_data, AudioData), "`audio_data` must be audio data"
+        assert key is None or isinstance(key, str), "`key` must be `None` or a string"
+        assert isinstance(language, str), "`language` must be a string"
+
+        flac_data = audio_data.get_wav_data(
+            convert_rate = 16000, # audio samples must be at least 8 kHz
+            convert_width = 2 # audio samples must be 16-bit
+        )
+        if key is None: key = "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"
+        url = "http://www.google.com/speech-api/v2/recognize?{0}".format(urlencode({
+            "client": "chromium",
+            "lang": language,
+            "key": key,
+        }))
+        request = Request(url, data = flac_data, headers = {"Content-Type": "audio/l16; rate=16000"})
+
+        # obtain audio transcription results
+        try:
+            response = urlopen(request)
+        except HTTPError as e:
+            raise RequestError("recognition request failed: {0}".format(getattr(e, "reason", "status {0}".format(e.code)))) # use getattr to be compatible with Python 2.6
+        except URLError as e:
+            raise RequestError("recognition connection failed: {0}".format(e.reason))
+        response_text = response.read().decode("utf-8")
+
+        # ignore any blank blocks
+        actual_result = []
+        for line in response_text.split("\n"):
+            if not line: continue
+            result = json.loads(line)["result"]
+            if len(result) != 0:
+                actual_result = result[0]
+                break
+
+        # return results
+        if show_all: return actual_result
+        if "alternative" not in actual_result: raise UnknownValueError()
+        for entry in actual_result["alternative"]:
+            if "transcript" in entry:
+                return entry["transcript"]
+        raise UnknownValueError() # no transcriptions available
+
+
+
+
+
+
     
 def gettoken(uid):
     red = redis.from_url(redis_url)
