@@ -117,7 +117,7 @@ def getAlexa(text,mid):
 
             #convert mp3 file to wav
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
-            output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-sample_fmts", "s16"])
+            output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
             #output2=_input2.export(tf3.name, format="wav")
 
             # #convert mp3 file to flac
