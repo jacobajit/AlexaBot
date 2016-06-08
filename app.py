@@ -40,7 +40,7 @@ except ImportError: # use the Python 3 modules
 
 
 
-def recognize_google(self, audio_data, key = None, language = "en-US", show_all = False):
+def recognize_google(audio_data, key = None, language = "en-US", show_all = False):
         """
         Performs speech recognition on ``audio_data`` (an ``AudioData`` instance), using the Google Speech Recognition API.
         The Google Speech Recognition API key is specified by ``key``. If not specified, it uses a generic key that works out of the box. This should generally be used for personal or testing purposes only, as it **may be revoked by Google at any time**.
