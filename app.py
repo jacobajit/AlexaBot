@@ -13,7 +13,7 @@ import redis
 import uuid
 import string
 from pydub import AudioSegment
-import speech_recognition as sr
+# import speech_recognition as sr
 from pymessenger.bot import Bot
 import traceback
 
@@ -970,8 +970,8 @@ def getAlexa(text,mid):
             
 
 
-            r = sr.Recognizer()
-            with sr.AudioFile(tf3) as source:
+            r = Recognizer()
+            with AudioFile(tf3) as source:
                 audio2 = r.record(source) # read the entire audio file
 
             # recognize speech using Wit.ai
