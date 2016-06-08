@@ -32,10 +32,10 @@ import json
 
 try: # attempt to use the Python 2 modules
     from urllib import urlencode
-    from urllib2 import Request, urlopen, URLError, HTTPError
+    from urllib2 import urlopen, URLError, HTTPError
 except ImportError: # use the Python 3 modules
     from urllib.parse import urlencode
-    from urllib.request import Request, urlopen
+    from urllib.request import urlopen
     from urllib.error import URLError, HTTPError
 
 
