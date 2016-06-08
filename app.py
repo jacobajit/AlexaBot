@@ -486,7 +486,7 @@ class Recognizer(AudioSource):
             raise RequestError("recognition request failed: {0}".format(getattr(e, "reason", "status {0}".format(e.code)))) # use getattr to be compatible with Python 2.6
         except URLError as e:
             raise RequestError("recognition connection failed: {0}".format(e.reason))
-        response_text = response.read().decode("utf-8")
+        response_text = response.text
         #.
 
         # ignore any blank blocks
