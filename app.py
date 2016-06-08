@@ -659,13 +659,13 @@ def getAlexa(text,mid):
             # recognize speech using Wit.ai
             print(token)
             WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
-            try:
-                transcriptionW=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                print("Wit.ai thinks you said " + transcriptionW )
-            except UnknownValueError:
-                print("Wit.ai could not understand audio")
-            except RequestError as e:
-                print("Could not request results from Wit.ai service; {0}".format(e))
+            # try:
+            #     transcriptionW=r.recognize_wit(audio2, key=WIT_AI_KEY)
+            #     print("Wit.ai thinks you said " + transcriptionW )
+            # except UnknownValueError:
+            #     print("Wit.ai could not understand audio")
+            # except RequestError as e:
+            #     print("Could not request results from Wit.ai service; {0}".format(e))
 
 
             # recognize speech using Google Speech Recognition
