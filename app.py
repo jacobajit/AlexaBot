@@ -575,6 +575,13 @@ class Recognizer(AudioSource):
         Returns the most likely transcription if ``show_all`` is false (the default). Otherwise, returns the `raw API response <https://wit.ai/docs/http/20141022#get-intent-via-text-link>`__ as a JSON dictionary.
         Raises a ``speech_recognition.UnknownValueError`` exception if the speech is unintelligible. Raises a ``speech_recognition.RequestError`` exception if the speech recognition operation failed, if the key isn't valid, or if there is no internet connection.
         """
+        try: # attempt to use the Python 2 modules
+            from urllib import urlencode
+            from urllib2 import Request, urlopen, URLError, HTTPError
+        except ImportError: # use the Python 3 modules
+            from urllib.parse import urlencode
+            from urllib.request import Request, urlopen
+            from urllib.error import URLError, HTTPError
         assert isinstance(audio_data, AudioData), "Data must be audio data"
         assert isinstance(key, str), "`key` must be a string"
 
