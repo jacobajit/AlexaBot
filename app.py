@@ -762,24 +762,27 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    red = redis.from_url(redis_url)
-                    if not red.exists(recipient_id+"-refresh_token"):
-                        print("Received refresh token")
-                        red.set(recipient_id+"-refresh_token", message)
-                        testing=gettoken(recipient_id)
-                        if(testing==False):
-                            red.delete(recipient_id+"-refresh_token")
-                            bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
-                        else:
-                            bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
-                        #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                    if message.lower() in {"hi", "hello", "hi alexa", "hello alexa"}:
+                        bot.send_text_message(recipient_id, "hi there")
                     else:
-                        
-                        print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                        # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
-                        alexaresponse = getAlexa(message,recipient_id)
-                        # bot.send_text_message(recipient_id, alexaresponse.text)
-                        bot.send_text_message(recipient_id, alexaresponse)
+                        red = redis.from_url(redis_url)
+                        if not red.exists(recipient_id+"-refresh_token"):
+                            print("Received refresh token")
+                            red.set(recipient_id+"-refresh_token", message)
+                            testing=gettoken(recipient_id)
+                            if(testing==False):
+                                red.delete(recipient_id+"-refresh_token")
+                                bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
+                            else:
+                                bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
+                            #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                        else:
+                            
+                            print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                            # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                            alexaresponse = getAlexa(message,recipient_id)
+                            # bot.send_text_message(recipient_id, alexaresponse.text)
+                            bot.send_text_message(recipient_id, alexaresponse)
                 except Exception,err:
                     print(traceback.format_exc())
 
