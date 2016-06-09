@@ -649,10 +649,10 @@ def getAlexa(text,mid):
                 transcriptionG=r.recognize_google(audio2, key="AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE")
                 print("Google Speech Recognition thinks you said " + transcriptionG)
             except UnknownValueError:
-                transcriptionG="Google Speech Recognition could not understand audio"
+                transcriptionG=transcriptionW
                 print("Google Speech Recognition could not understand audio")
             except RequestError as e:
-                transcriptionG="Could not request results from Google Speech Recognition service"
+                transcriptionG=transcriptionW
                 print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
