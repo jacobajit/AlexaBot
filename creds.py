@@ -18,3 +18,6 @@ redis_url = os.environ['REDIS_URL']
 
 #VoiceRSS
 VoiceRSS_Token=os.environ['VOICERSS_TOKEN']
+
+#Google Speech Recognition
+Google_Speech_Token=os.environ['GOOGLE_SPEECH_TOKEN']
