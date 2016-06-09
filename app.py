@@ -548,8 +548,8 @@ def getAlexa(text,mid):
             print("geting argument...")
             phrase=text
             print(phrase)
-
-            audio = requests.get('https://api.voicerss.org/', params={'key': '970f71e61a4b4c8abd6af0d1f6a5326e', 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+            audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
@@ -646,7 +646,7 @@ def getAlexa(text,mid):
                 # for testing purposes, we're just using the default API key
                 # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
                 # instead of `r.recognize_google(audio)`
-                transcriptionG=r.recognize_google(audio2, key="AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE")
+                transcriptionG=r.recognize_google(audio2, key=Google_Speech_Token)
                 print("Google Speech Recognition thinks you said " + transcriptionG)
             except UnknownValueError:
                 transcriptionG=transcriptionW
@@ -791,6 +791,146 @@ class MessageHandler(BaseHandler):
 
     def write_error(self, status_code, **kwargs):
         self.write("Gosh darnit, user! You caused a %d error." % status_code)
+
+
+
+
+
+#REST API version of getAlexa, pass in token and text, get text back
+class AudioHandler(BaseHandler):
+    # @tornado.web.authenticated
+    @tornado.web.asynchronous
+    def get(self):
+        print("getting post...")#
+        # uid = tornado.escape.xhtml_escape(self.current_user)
+
+        token=self.get_argument("token") #get argument later
+        #token=""
+        
+
+        print("geting argument...")
+        phrase=self.get_argument("text")
+        print(phrase)
+        #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+        audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+        rxfile = audio.content
+
+        tf = tempfile.NamedTemporaryFile(suffix=".wav")
+        tf.write(rxfile)
+        _input = AudioSegment.from_wav(tf.name)
+        tf.close()
+
+        tf = tempfile.NamedTemporaryFile(suffix=".wav")
+        output = _input.set_channels(1).set_frame_rate(16000)
+        f = output.export(tf.name, format="wav")
+        url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
+        headers = {'Authorization' : 'Bearer %s' % token}
+        d = {
+            "messageHeader": {
+                "deviceContext": [
+                    {
+                        "name": "playbackState",
+                        "namespace": "AudioPlayer",
+                        "payload": {
+                            "streamId": "",
+                            "offsetInMilliseconds": "0",
+                            "playerActivity": "IDLE"
+                        }
+                    }
+                ]
+            },
+            "messageBody": {
+                "profile": "alexa-close-talk",
+                "locale": "en-us",
+                "format": "audio/L16; rate=16000; channels=1"
+            }
+        }
+        files = [
+            ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
+            ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
+        ]   
+        r = requests.post(url, headers=headers, files=files)
+        tf.close()
+        for v in r.headers['content-type'].split(";"):
+            if re.match('.*boundary.*', v):
+                boundary =  v.split("=")[1]
+
+        data = r.content.split(boundary)
+        for d in data:
+            if (len(d) >= 1024):
+               audio = d.split('\r\n\r\n')[1].rstrip('--')
+
+
+        tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+        tf2.write(audio)
+        _input2 = AudioSegment.from_mp3(tf2.name)
+        tf2.close()
+
+
+        #convert mp3 file to wav
+        tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
+        #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
+        output2=_input2.export(tf3.name, format="wav")
+
+        # #convert mp3 file to flac
+        # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
+        # output3=_input2.export(flacfile.name, format="flac",bitrate="44100")
+        # googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
+        # # flacdata=flacfile.read()
+        # # print(flacdata)
+        # google = requests.post('https://www.google.com/speech-api/v2/recognize', files={"file": tf3}, params=googlepayload, headers={"Content-Type": "audio/l16; rate=16000"})
+
+        # print("google:", google)
+        # # print(google.text)
+        # print("json:", google.json())
+        # googletranscription=google.json()['result'][0]['alternative'][0]['transcript']
+        # print(googletranscription)
+        
+
+
+        r = Recognizer()
+        with AudioFile(tf3) as source:
+            audio2 = r.record(source) # read the entire audio file
+
+        # recognize speech using Wit.ai
+        print(token)
+        WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
+        try:
+            transcriptionW=r.recognize_wit(audio2, key=WIT_AI_KEY)
+            print("Wit.ai thinks you said " + transcriptionW )
+        except UnknownValueError:
+            print("Wit.ai could not understand audio")
+        except RequestError as e:
+            print("Could not request results from Wit.ai service; {0}".format(e))
+
+
+        # recognize speech using Google Speech Recognition
+        try:
+            # for testing purposes, we're just using the default API key
+            # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+            # instead of `r.recognize_google(audio)`
+            transcriptionG=r.recognize_google(audio2, key=Google_Speech_Token)
+            print("Google Speech Recognition thinks you said " + transcriptionG)
+        except UnknownValueError:
+            transcriptionG=transcriptionW
+            print("Google Speech Recognition could not understand audio")
+        except RequestError as e:
+            transcriptionG=transcriptionW
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+
+
+        self.set_header('Content-Type', 'text/plain')
+        self.write(transcriptionG)
+        self.finish()
+
+
+
+
+
+
+
+
+
 
 #REST API version of getAlexa, pass in token and text, get text back
 class AudioHandler(BaseHandler):

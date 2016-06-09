@@ -15,3 +15,6 @@ Wit_Token= os.environ['WIT_TOKEN']
 
 #Redis
 redis_url = os.environ['REDIS_URL']
+
+#VoiceRSS
+VoiceRSS_Token=os.environ['VOICERSS_TOKEN']
