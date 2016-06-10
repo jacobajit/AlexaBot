@@ -764,6 +764,8 @@ class MessageHandler(BaseHandler):
                 try:
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa"}:
                         bot.send_text_message(recipient_id, "hi there")
+                    elif message.lower() in {"help"}:
+                        bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. Fpr more help with what you can say, check out the Things to Try section of the Alexa app.")
                     else:
                         red = redis.from_url(redis_url)
                         if not red.exists(recipient_id+"-refresh_token"):
