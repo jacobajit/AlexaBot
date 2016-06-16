@@ -891,7 +891,8 @@ class AudioHandler(BaseHandler):
 
         tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
         tf2.write(audio)
-        _input2 = AudioSegment.from_mp3(tf2.name)
+        silence = AudioSegment.from_mp3("/static/oneSecSilence.mp3")
+        _input2 = AudioSegment.from_mp3(tf2.name) + silence
         tf2.close()
 
 
