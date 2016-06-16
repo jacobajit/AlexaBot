@@ -900,6 +900,7 @@ class AudioHandler(BaseHandler):
         tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
         #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
         output2=_input2.export(tf3.name, format="wav")
+        open("temp.wav", 'w').write(output2)
 
         # #convert mp3 file to flac
         # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
