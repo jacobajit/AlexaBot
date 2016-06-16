@@ -33,7 +33,7 @@ import json
 import signal
 
 
-class timeout:
+class Timeout:
     def __init__(self, seconds=1, error_message='Timeout'):
         self.seconds = seconds
         self.error_message = error_message
@@ -776,9 +776,9 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    with timeout(seconds=25):
+                    with Timeout(seconds=20):
                     
-                        if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey"}:
+                        if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                             bot.send_text_message(recipient_id, "hi there")
                         elif message.lower() in {"help"}:
                             bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
