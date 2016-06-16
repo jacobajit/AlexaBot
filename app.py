@@ -776,7 +776,7 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    with Timeout(seconds=20):
+                    with Timeout(seconds=15):
                     
                         if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                             bot.send_text_message(recipient_id, "hi there")
@@ -799,6 +799,7 @@ class MessageHandler(BaseHandler):
                                 print("Getting Alexa's response from AudioHandler. Message was: "+message)
                                 # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
                                 alexaresponse = getAlexa(message,recipient_id)
+                                print("Alexa's response: ", alexaresponse)
                                 # bot.send_text_message(recipient_id, alexaresponse.text)
                                 bot.send_text_message(recipient_id, alexaresponse)
                 except WaitTimeoutError:
