@@ -658,7 +658,7 @@ def getAlexa(text,mid):
                 WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
                 try:
                     transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                    print("Wit.ai thinks you said " + transcription )
+                    print("Wit.ai thinks you said " + transcription)
                 except UnknownValueError:
                     print("Wit.ai could not understand audio")
                 except RequestError as e:
@@ -900,7 +900,6 @@ class AudioHandler(BaseHandler):
         tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
         #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
         output2=_input2.export(tf3.name, format="wav")
-        open("temp.wav", 'w').write(output2)
 
         # #convert mp3 file to flac
         # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
@@ -922,35 +921,35 @@ class AudioHandler(BaseHandler):
         with AudioFile(tf3) as source:
             audio2 = r.record(source) # read the entire audio file
 
-        # recognize speech using Wit.ai
-        print(token)
-        WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
-        try:
-            transcriptionW=r.recognize_wit(audio2, key=WIT_AI_KEY)
-            print("Wit.ai thinks you said " + transcriptionW )
-        except UnknownValueError:
-            print("Wit.ai could not understand audio")
-        except RequestError as e:
-            print("Could not request results from Wit.ai service; {0}".format(e))
-
-
         # recognize speech using Google Speech Recognition
         try:
             # for testing purposes, we're just using the default API key
             # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
             # instead of `r.recognize_google(audio)`
-            transcriptionG=r.recognize_google(audio2, key=Google_Speech_Token)
+            transcription=r.recognize_google(audio2, key=Google_Speech_Token)
             print("Google Speech Recognition thinks you said " + transcriptionG)
-        except UnknownValueError:
-            transcriptionG=transcriptionW
-            print("Google Speech Recognition could not understand audio")
-        except RequestError as e:
-            transcriptionG=transcriptionW
-            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        except:
+            # recognize speech using Wit.ai
+            print(token)
+            WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
+            try:
+                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
+                print("Wit.ai thinks you said " + transcription)
+            except UnknownValueError:
+                print("Wit.ai could not understand audio")
+            except RequestError as e:
+                print("Could not request results from Wit.ai service; {0}".format(e))
+
+        #except UnknownValueError:
+        #    transcriptionG=transcriptionW
+        #    print("Google Speech Recognition could not understand audio")
+        #except RequestError as e:
+        #    transcriptionG=transcriptionW
+        #    print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
         self.set_header('Content-Type', 'text/plain')
-        self.write(transcriptionG)
+        self.write(transcription)
         self.finish()
 
 
@@ -1045,7 +1044,7 @@ class AudioHandler(BaseHandler):
             WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
             try:
                 transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                print("Wit.ai thinks you said " + transcription )
+                print("Wit.ai thinks you said " + transcription)
             except sr.UnknownValueError:
                 print("Wit.ai could not understand audio")
             except sr.RequestError as e:
