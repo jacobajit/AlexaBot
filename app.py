@@ -30,6 +30,8 @@ import math, audioop, collections, threading
 import platform, stat, random, uuid
 import json
 
+import signal
+
 
 class timeout:
     def __init__(self, seconds=1, error_message='Timeout'):
