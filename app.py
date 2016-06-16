@@ -762,7 +762,7 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    if message.lower() in {"hi", "hello", "hi alexa", "hello alexa"}:
+                    if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey"}:
                         bot.send_text_message(recipient_id, "hi there")
                     elif message.lower() in {"help"}:
                         bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
