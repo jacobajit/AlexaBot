@@ -38,7 +38,8 @@ class timeout:
         self.seconds = seconds
         self.error_message = error_message
     def handle_timeout(self, signum, frame):
-        raise WaitTimeoutError(self.error_message)
+        print("TIMED OUT")
+        raise Exception('Request took too long.')
     def __enter__(self):
         signal.signal(signal.SIGALRM, self.handle_timeout)
         signal.alarm(self.seconds)
