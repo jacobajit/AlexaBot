@@ -36,7 +36,7 @@ class timeout:
         self.seconds = seconds
         self.error_message = error_message
     def handle_timeout(self, signum, frame):
-        raise TimeoutError(self.error_message)
+        raise WaitTimeoutError(self.error_message)
     def __enter__(self):
         signal.signal(signal.SIGALRM, self.handle_timeout)
         signal.alarm(self.seconds)
@@ -798,7 +798,7 @@ class MessageHandler(BaseHandler):
                                 alexaresponse = getAlexa(message,recipient_id)
                                 # bot.send_text_message(recipient_id, alexaresponse.text)
                                 bot.send_text_message(recipient_id, alexaresponse)
-                except TimeoutError:
+                except WaitTimeoutError:
                     print(traceback.format_exc())
 
                     bot.send_text_message(recipient_id, "Request took too long.")
