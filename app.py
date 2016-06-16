@@ -801,7 +801,9 @@ class MessageHandler(BaseHandler):
                                 alexaresponse = getAlexa(message,recipient_id)
                                 print("Alexa's response: ", alexaresponse)
                                 # bot.send_text_message(recipient_id, alexaresponse.text)
-                                bot.send_text_message(recipient_id, alexaresponse[:min(len(alexaresponse), 320)])
+                                if len(alexaresponse) > 320:
+                                    alexaresponse = alexaresponse[:317] + "..."
+                                bot.send_text_message(recipient_id, alexaresponse)
                 except WaitTimeoutError:
                     print(traceback.format_exc())
 
