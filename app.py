@@ -347,7 +347,7 @@ class Recognizer(AudioSource):
             while True:
                 elapsed_time += seconds_per_buffer
                 if timeout and elapsed_time > timeout: # handle timeout if specified
-                    raise WaitTimeoutError("listening timed out")
+                    raise TimeoutError("listening timed out")
 
                 buffer = source.stream.read(source.CHUNK)
                 if len(buffer) == 0: break # reached end of the stream
