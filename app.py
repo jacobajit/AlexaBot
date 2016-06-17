@@ -17,40 +17,55 @@ from pydub import AudioSegment
 from pymessenger.bot import Bot
 import traceback
 
-
-
 TOKEN= Facebook_Token
 bot = Bot(TOKEN)
 
-
-
 #pydub imports
-import io, os, subprocess, wave, aifc, base64
+import io, subprocess, wave, aifc, base64
 import math, audioop, collections, threading
 import platform, stat, random, uuid
 import json
 
 import signal
+import errno
+from functools import wraps
 
-
-class Timeout:
-    def __init__(self, seconds=1, error_message='Timeout'):
-        self.seconds = seconds
-        self.error_message = error_message
-    def handle_timeout(self, signum, frame):
-        print("TIMED OUT")
-        raise Exception('Request took too long.')
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.handle_timeout)
-        signal.alarm(self.seconds)
-    def __exit__(self, type, value, traceback):
-        signal.alarm(0)
+#class Timeout:
+#    def __init__(self, seconds=1, error_message='Timeout'):
+#        self.seconds = seconds
+#        self.error_message = error_message
+#    def handle_timeout(self, signum, frame):
+#        print("TIMED OUT")
+#        raise Exception('Request took too long.')
+#    def __enter__(self):
+#        signal.signal(signal.SIGALRM, self.handle_timeout)
+#        signal.alarm(self.seconds)
+#    def __exit__(self, type, value, traceback):
+#        signal.alarm(0)
 
 
 # define exceptions
-class WaitTimeoutError(Exception): pass
+class TimeoutError(Exception): pass
 class RequestError(Exception): pass
 class UnknownValueError(Exception): pass
+
+def timeout(seconds=15, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wraps(func)(wrapper)
+
+    return decorator
 
 class AudioSource(object):
     def __init__(self):
@@ -393,7 +408,7 @@ class Recognizer(AudioSource):
                 while running[0]:
                     try: # listen for 1 second, then check again if the stop function has been called
                         audio = self.listen(s, 1)
-                    except WaitTimeoutError: # listening timed out, just try again
+                    except TimeoutError: # listening timed out, just try again
                         pass
                     else:
                         if running[0]: callback(self, audio)
@@ -755,6 +770,7 @@ class MessageHandler(BaseHandler):
             self.write(self.get_argument("hub.challenge", default=None, strip=False))
             self.finish()
 
+    @timeout
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
         print("OUTPUT: ",output)
@@ -776,41 +792,40 @@ class MessageHandler(BaseHandler):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    with Timeout(seconds=15):
+                    #with Timeout(seconds=15):
                     
-                        if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
-                            bot.send_text_message(recipient_id, "hi there")
-                        elif message.lower() in {"help"}:
-                            bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
-                        else:
-                            red = redis.from_url(redis_url)
-                            if not red.exists(recipient_id+"-refresh_token"):
-                                print("Received refresh token")
-                                red.set(recipient_id+"-refresh_token", message)
-                                testing=gettoken(recipient_id)
-                                if(testing==False):
-                                    red.delete(recipient_id+"-refresh_token")
-                                    bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
-                                else:
-                                    bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
-                                #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                    if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
+                        bot.send_text_message(recipient_id, "hi there")
+                    elif message.lower() in {"help"}:
+                        bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
+                    else:
+                        red = redis.from_url(redis_url)
+                        if not red.exists(recipient_id+"-refresh_token"):
+                            print("Received refresh token")
+                            red.set(recipient_id+"-refresh_token", message)
+                            testing=gettoken(recipient_id)
+                            if(testing==False):
+                                red.delete(recipient_id+"-refresh_token")
+                                bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
                             else:
-                                
-                                print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                                # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
-                                alexaresponse = getAlexa(message,recipient_id)
-                                print("Alexa's response: ", alexaresponse)
-                                # bot.send_text_message(recipient_id, alexaresponse.text)
-                                if len(alexaresponse) > 320:
-                                    alexaresponse = alexaresponse[:317] + "..."
-                                bot.send_text_message(recipient_id, alexaresponse)
-                except WaitTimeoutError:
+                                bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
+                            #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                        else:
+                            
+                            print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                            # alexaresponse = requests.get('https://helloalexa.herokuapp.com/audio', params={'text': message})
+                            alexaresponse = getAlexa(message,recipient_id)
+                            print("Alexa's response: ", alexaresponse)
+                            # bot.send_text_message(recipient_id, alexaresponse.text)
+                            if len(alexaresponse) > 320:
+                                alexaresponse = alexaresponse[:317] + "..."
+                            bot.send_text_message(recipient_id, alexaresponse)
+                except TimeoutError:
                     print(traceback.format_exc())
 
                     bot.send_text_message(recipient_id, "Request took too long.")
                 except Exception,err:
-                    print(traceback.format_exc())
-
+                    print("Couldn't understand: ", traceback.format_exc())
                     bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
             else:
                 pass
@@ -819,9 +834,6 @@ class MessageHandler(BaseHandler):
 
     def write_error(self, status_code, **kwargs):
         self.write("Gosh darnit, user! You caused a %d error." % status_code)
-
-
-
 
 
 #REST API version of getAlexa, pass in token and text, get text back
