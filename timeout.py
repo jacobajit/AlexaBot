@@ -1,6 +1,7 @@
 import errno
 from functools import wraps
 import signal
+import os
 
 def timeout(seconds=15, error_message=os.strerror(errno.ETIME)):
     def decorator(func):
