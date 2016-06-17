@@ -26,9 +26,7 @@ import math, audioop, collections, threading
 import platform, stat, random, uuid
 import json
 
-import signal
-import errno
-from functools import wraps
+from timeout import timeout
 
 #class Timeout:
 #    def __init__(self, seconds=1, error_message='Timeout'):
@@ -48,24 +46,6 @@ from functools import wraps
 class TimeoutError(Exception): pass
 class RequestError(Exception): pass
 class UnknownValueError(Exception): pass
-
-def timeout(seconds=15, error_message=os.strerror(errno.ETIME)):
-    def decorator(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError(error_message)
-
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-
-        return wraps(func)(wrapper)
-
-    return decorator
 
 class AudioSource(object):
     def __init__(self):
