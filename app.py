@@ -543,6 +543,7 @@ def gettoken(uid):
         return False
 
 #function version of getting Alexa's response in text
+@timeout(20)
 def getAlexa(text,mid):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
@@ -750,7 +751,7 @@ class MessageHandler(BaseHandler):
             self.write(self.get_argument("hub.challenge", default=None, strip=False))
             self.finish()
 
-    @timeout
+    
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
         print("OUTPUT: ",output)
