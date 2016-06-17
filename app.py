@@ -562,14 +562,13 @@ def getAlexa(text,mid):
             print("geting argument...")
             phrase=text
             print(phrase)
-            urltts='http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=tw-ob&q='+phrase+'&tl=En-us'
-            audio=requests.get(urltts)
-            #audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+            audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
 
-            tf = tempfile.NamedTemporaryFile(suffix=".mp3")
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
             tf.write(rxfile)
-            _input = AudioSegment.from_mp3(tf.name)
+            _input = AudioSegment.from_wav(tf.name)
             tf.close()
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
@@ -623,6 +622,21 @@ def getAlexa(text,mid):
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
             #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
             output2=_input2.export(tf3.name, format="wav")
+
+            # #convert mp3 file to flac
+            # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
+            # output3=_input2.export(flacfile.name, format="flac",bitrate="44100")
+            # googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
+            # # flacdata=flacfile.read()
+            # # print(flacdata)
+            # google = requests.post('https://www.google.com/speech-api/v2/recognize', files={"file": tf3}, params=googlepayload, headers={"Content-Type": "audio/l16; rate=16000"})
+
+            # print("google:", google)
+            # # print(google.text)
+            # print("json:", google.json())
+            # googletranscription=google.json()['result'][0]['alternative'][0]['transcript']
+            # print(googletranscription)
+            
 
 
             r = Recognizer()
