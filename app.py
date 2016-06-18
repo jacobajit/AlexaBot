@@ -772,7 +772,7 @@ class MessageHandler(BaseHandler):
                     bot.send_text_message(recipient_id, "Request took too long.")
                 except Exception,err:
                     print("Couldn't understand: ", traceback.format_exc())
-                    bot.send_text_message(recipient_id, "Sorry, we couldn't understand your message.")
+                    bot.send_text_message(recipient_id, "Sorry, something went wrong.")
             else:
                 pass
         self.set_status(200)
