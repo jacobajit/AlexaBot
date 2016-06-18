@@ -388,7 +388,88 @@ class Recognizer(AudioSource):
         listener_thread.start()
         return stopper
 
- 
+    def recognize_bing(self, audio_data, key, language = "en-US", show_all = False):
+        """
+        Performs speech recognition on ``audio_data`` (an ``AudioData`` instance), using the Microsoft Bing Voice Recognition API.
+        The Microsoft Bing Voice Recognition API key is specified by ``key``. Unfortunately, these are not available without `signing up for an account <https://www.microsoft.com/cognitive-services/en-us/speech-api>`__ with Microsoft Cognitive Services.
+        To get the API key, go to the `Microsoft Cognitive Services subscriptions overview <https://www.microsoft.com/cognitive-services/en-us/subscriptions>`__, go to the entry titled "Speech", and look for the key under the "Keys" column. Microsoft Bing Voice Recognition API keys are 32-character lowercase hexadecimal strings.
+        The recognition language is determined by ``language``, an RFC5646 language tag like ``"en-US"`` (US English) or ``"fr-FR"`` (International French), defaulting to US English. A list of supported language values can be found in the `API documentation <https://www.microsoft.com/cognitive-services/en-us/speech-api/documentation/api-reference-rest/BingVoiceRecognition#user-content-4-supported-locales>`__.
+        Returns the most likely transcription if ``show_all`` is false (the default). Otherwise, returns the `raw API response <https://www.microsoft.com/cognitive-services/en-us/speech-api/documentation/api-reference-rest/BingVoiceRecognition#user-content-3-voice-recognition-responses>`__ as a JSON dictionary.
+        Raises a ``speech_recognition.UnknownValueError`` exception if the speech is unintelligible. Raises a ``speech_recognition.RequestError`` exception if the speech recognition operation failed, if the key isn't valid, or if there is no internet connection.
+        """
+        assert isinstance(audio_data, AudioData), "Data must be audio data"
+        assert isinstance(key, str), "`key` must be a string"
+        assert isinstance(language, str), "`language` must be a string"
+
+        access_token, expire_time = getattr(self, "bing_cached_access_token", None), getattr(self, "bing_cached_access_token_expiry", None)
+        allow_caching = True
+        try:
+            from time import monotonic # we need monotonic time to avoid being affected by system clock changes, but this is only available in Python 3.3+
+        except ImportError:
+            try:
+                from monotonic import monotonic # use time.monotonic backport for Python 2 if available (from https://pypi.python.org/pypi/monotonic)
+            except (ImportError, RuntimeError):
+                expire_time = None # monotonic time not available, don't cache access tokens
+                allow_caching = False # don't allow caching, since monotonic time isn't available
+        if expire_time is None or monotonic() > expire_time: # caching not enabled, first credential request, or the access token from the previous one expired
+            # get an access token using OAuth
+            credential_url = "https://oxford-speech.cloudapp.net/token/issueToken"
+            credential_request = Request(credential_url, data = urlencode({
+              "grant_type": "client_credentials",
+              "client_id": "python",
+              "client_secret": key,
+              "scope": "https://speech.platform.bing.com"
+            }).encode("utf-8"))
+            if allow_caching:
+                start_time = monotonic()
+            try:
+                credential_response = urlopen(credential_request)
+            except HTTPError as e:
+                raise RequestError("recognition request failed: {0}".format(getattr(e, "reason", "status {0}".format(e.code)))) # use getattr to be compatible with Python 2.6
+            except URLError as e:
+                raise RequestError("recognition connection failed: {0}".format(e.reason))
+            credential_text = credential_response.read().decode("utf-8")
+            credentials = json.loads(credential_text)
+            access_token, expiry_seconds = credentials["access_token"], float(credentials["expires_in"])
+
+            if allow_caching:
+                # save the token for the duration it is valid for
+                self.bing_cached_access_token = access_token
+                self.bing_cached_access_token_expiry = start_time + expiry_seconds
+
+        wav_data = audio_data.get_wav_data(
+            convert_rate = 16000, # audio samples must be 8kHz or 16 kHz
+            convert_width = 2 # audio samples should be 16-bit
+        )
+        url = "https://speech.platform.bing.com/recognize/query?{0}".format(urlencode({
+            "version": "3.0",
+            "requestid": uuid.uuid4(),
+            "appID": "D4D52672-91D7-4C74-8AD8-42B1D98141A5",
+            "format": "json",
+            "locale": language,
+            "device.os": "wp7",
+            "scenarios": "ulm",
+            "instanceid": uuid.uuid4(),
+            "result.profanitymarkup": "0",
+        }))
+        request = Request(url, data = wav_data, headers = {
+            "Authorization": "Bearer {0}".format(access_token),
+            "Content-Type": "audio/wav; samplerate=16000; sourcerate={0}; trustsourcerate=true".format(audio_data.sample_rate),
+        })
+        try:
+            response = urlopen(request)
+        except HTTPError as e:
+            raise RequestError("recognition request failed: {0}".format(getattr(e, "reason", "status {0}".format(e.code)))) # use getattr to be compatible with Python 2.6
+        except URLError as e:
+            raise RequestError("recognition connection failed: {0}".format(e.reason))
+        response_text = response.read().decode("utf-8")
+        result = json.loads(response_text)
+
+        # return results
+        if show_all: return result
+        if "header" not in result or "lexical" not in result["header"]: raise UnknownValueError()
+        return result["header"]["lexical"]
+
 
     def recognize_google(self,audio_data, key = None, language = "en-US", show_all = False):
         """
@@ -849,8 +930,7 @@ class AudioHandler(BaseHandler):
 
         tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
         tf2.write(audio)
-        silence = AudioSegment.from_mp3("static/silence.mp3")
-        _input2 = AudioSegment.from_mp3(tf2.name) + silence
+        _input2 = AudioSegment.from_mp3(tf2.name) 
         tf2.close()
 
 
@@ -878,6 +958,16 @@ class AudioHandler(BaseHandler):
         r = Recognizer()
         with AudioFile(tf3) as source:
             audio2 = r.record(source) # read the entire audio file
+
+
+        # recognize speech using Microsoft Bing Voice Recognition
+        BING_KEY = "ca19922330ba4b87819b93f35d4fea68" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
+        try:
+            print("Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio, key=BING_KEY))
+        except UnknownValueError:
+            print("Microsoft Bing Voice Recognition could not understand audio")
+        except RequestError as e:
+            print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
 
         # recognize speech using Google Speech Recognition
         try:
