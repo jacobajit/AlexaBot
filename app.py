@@ -701,7 +701,7 @@ def getAlexa(text,mid):
                 audio2 = r.record(source) # read the entire audio file
 
            # recognize speech using Microsoft Bing Voice Recognition
-            BING_KEY = "ca19922330ba4b87819b93f35d4fea68" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
+            BING_KEY = "578545f1fb3940fb99151cfd79b476b1" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
             try:
                 print("Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY))
             except UnknownValueError:
