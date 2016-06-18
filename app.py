@@ -28,18 +28,6 @@ import json
 
 from timeout import timeout
 
-#class Timeout:
-#    def __init__(self, seconds=1, error_message='Timeout'):
-#        self.seconds = seconds
-#        self.error_message = error_message
-#    def handle_timeout(self, signum, frame):
-#        print("TIMED OUT")
-#        raise Exception('Request took too long.')
-#    def __enter__(self):
-#        signal.signal(signal.SIGALRM, self.handle_timeout)
-#        signal.alarm(self.seconds)
-#    def __exit__(self, type, value, traceback):
-#        signal.alarm(0)
 
 
 # define exceptions
@@ -515,10 +503,6 @@ def shutil_which(pgm):
             return p
 
 
-
-
-
-
     
 def gettoken(uid):
     red = redis.from_url(redis_url)
@@ -618,22 +602,7 @@ def getAlexa(text,mid):
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
             #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
             output2=_input2.export(tf3.name, format="wav")
-
-            # #convert mp3 file to flac
-            # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
-            # output3=_input2.export(flacfile.name, format="flac",bitrate="44100")
-            # googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
-            # # flacdata=flacfile.read()
-            # # print(flacdata)
-            # google = requests.post('https://www.google.com/speech-api/v2/recognize', files={"file": tf3}, params=googlepayload, headers={"Content-Type": "audio/l16; rate=16000"})
-
-            # print("google:", google)
-            # # print(google.text)
-            # print("json:", google.json())
-            # googletranscription=google.json()['result'][0]['alternative'][0]['transcript']
-            # print(googletranscription)
-            
-
+ 
 
             r = Recognizer()
             with AudioFile(tf3) as source:
@@ -661,10 +630,6 @@ def getAlexa(text,mid):
                     print("Could not request results from Wit.ai service; {0}".format(e))
 
                 print("Google Speech Recognition could not understand audio")
-            #except RequestError as e:
-            #    transcriptionG=transcriptionW
-            #    print("Could not request results from Google Speech Recognition service; {0}".format(e))
-
 
             return transcription
 
@@ -678,10 +643,8 @@ class MainHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        # self.set_header('Content-Type', 'text/plain')
         self.render("static/tokengenerator.html", token=self.get_argument("refreshtoken"))
-        # self.write("Copy and paste this code into AlexaBot: \n \n"+self.get_argument("refreshtoken", default=None, strip=False))
-        # self.finish()
+
 
 
 class StartAuthHandler(tornado.web.RequestHandler):
@@ -768,12 +731,11 @@ class MessageHandler(BaseHandler):
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                     print(r.text)
                     print("Made post request")
-                    #bot.send_text_message(recipient_id, "Log into Amazon at "+link)
+                   
             elif (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    #with Timeout(seconds=15):
                     
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                         bot.send_text_message(recipient_id, "hi there")
@@ -787,10 +749,13 @@ class MessageHandler(BaseHandler):
                             testing=gettoken(recipient_id)
                             if(testing==False):
                                 red.delete(recipient_id+"-refresh_token")
-                                bot.send_text_message(recipient_id, "Sorry, that looks like an invalid token. Try again here https://helloalexa.herokuapp.com/start and come back with your code.")
+                                link='https://helloalexa.herokuapp.com/start?mid='+recipient_id
+                                messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "You are not logged in properly.","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
+                                payload = {"recipient": {"id": recipient_id}, "message": messageData}
+                                r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                             else:
                                 bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
-                            #bot.send_text_message(recipient_id,"Hey there, I'm AlexaBot! Please click on the following link to connect to you Amazon account: https://helloalexa.herokuapp.com/start")
+                          
                         else:
                             
                             print("Getting Alexa's response from AudioHandler. Message was: "+message)
