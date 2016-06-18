@@ -689,7 +689,14 @@ def getAlexa(text,mid):
             with AudioFile(tf3) as source:
                 audio2 = r.record(source) # read the entire audio file
 
-           
+           # recognize speech using Microsoft Bing Voice Recognition
+            BING_KEY = "ca19922330ba4b87819b93f35d4fea68" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
+            try:
+                print("Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY))
+            except UnknownValueError:
+                print("Microsoft Bing Voice Recognition could not understand audio")
+            except RequestError as e:
+                print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
 
             # recognize speech using Google Speech Recognition
             try:
@@ -936,24 +943,8 @@ class AudioHandler(BaseHandler):
 
         #convert mp3 file to wav
         tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
-        #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
         output2=_input2.export(tf3.name, format="wav")
-
-        # #convert mp3 file to flac
-        # flacfile = tempfile.NamedTemporaryFile(suffix=".flac")
-        # output3=_input2.export(flacfile.name, format="flac",bitrate="44100")
-        # googlepayload = {'output': 'json', 'lang': 'en-US', 'key':'AIzaSyDtC4Lu1u2MV6FNEk7ZJOcoLrMa9bOnUlE'}
-        # # flacdata=flacfile.read()
-        # # print(flacdata)
-        # google = requests.post('https://www.google.com/speech-api/v2/recognize', files={"file": tf3}, params=googlepayload, headers={"Content-Type": "audio/l16; rate=16000"})
-
-        # print("google:", google)
-        # # print(google.text)
-        # print("json:", google.json())
-        # googletranscription=google.json()['result'][0]['alternative'][0]['transcript']
-        # print(googletranscription)
-        
-
+       
 
         r = Recognizer()
         with AudioFile(tf3) as source:
