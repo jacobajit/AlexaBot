@@ -536,7 +536,7 @@ def getAlexa(text,mid):
         if (token == False):
             red = redis.from_url(redis_url)
             red.delete(mid+"-refresh_token")
-            return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://alexabot.herokuapp.com/start and come back with your code."
+            return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
 
             print("geting argument...")
@@ -725,7 +725,7 @@ class MessageHandler(BaseHandler):
                 payload = x['postback']['payload']
                 if payload=="AUTH":
                     print("Generating login link...")
-                    link='https://alexabot.herokuapp.com/start?mid='+recipient_id
+                    link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
                     messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
                     payload = {"recipient": {"id": recipient_id}, "message": messageData}
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
@@ -749,7 +749,7 @@ class MessageHandler(BaseHandler):
                             testing=gettoken(recipient_id)
                             if(testing==False):
                                 red.delete(recipient_id+"-refresh_token")
-                                link='https://alexabot.herokuapp.com/start?mid='+recipient_id
+                                link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
                                 messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "You are not logged in properly.","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
                                 payload = {"recipient": {"id": recipient_id}, "message": messageData}
                                 r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
@@ -759,7 +759,7 @@ class MessageHandler(BaseHandler):
                         else:
                             
                             print("Getting Alexa's response from AudioHandler. Message was: "+message)
-                            # alexaresponse = requests.get('https://alexabot.herokuapp.com/audio', params={'text': message})
+                            # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
                             alexaresponse = getAlexa(message,recipient_id)
                             print("Alexa's response: ", alexaresponse)
                             # bot.send_text_message(recipient_id, alexaresponse.text)
