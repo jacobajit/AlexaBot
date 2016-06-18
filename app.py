@@ -26,7 +26,7 @@ import math, audioop, collections, threading
 import platform, stat, random, uuid
 import json
 
-from timeout import timeout
+from timeout_dec import timeout_dec
 
 #class Timeout:
 #    def __init__(self, seconds=1, error_message='Timeout'):
@@ -543,7 +543,7 @@ def gettoken(uid):
         return False
 
 #function version of getting Alexa's response in text
-@timeout(20)
+@timeout_dec(20)
 def getAlexa(text,mid):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
