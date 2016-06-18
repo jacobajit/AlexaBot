@@ -552,7 +552,7 @@ def getAlexa(text,mid):
         if (token == False):
             red = redis.from_url(redis_url)
             red.delete(mid+"-refresh_token")
-            return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://alexabottesting.herokuapp.com/start and come back with your code."
+            return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://helloalexa.herokuapp.com/start and come back with your code."
         else:
 
             print("geting argument...")
