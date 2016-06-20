@@ -594,7 +594,6 @@ def shutil_which(pgm):
         if os.path.exists(p) and os.access(p, os.X_OK):
             return p
 
-
     
 def gettoken(uid):
     red = redis.from_url(redis_url)
@@ -630,7 +629,6 @@ def getAlexa(text,mid):
             red.delete(mid+"-refresh_token")
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
-
             print("geting argument...")
             phrase=text
             print(phrase)
@@ -683,19 +681,16 @@ def getAlexa(text,mid):
                 if (len(d) >= 1024):
                    audio = d.split('\r\n\r\n')[1].rstrip('--')
 
-
             tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
             tf2.write(audio)
             _input2 = AudioSegment.from_mp3(tf2.name)
             tf2.close()
-
 
             #convert mp3 file to wav
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
             #output2=_input2.export(tf3.name, format="wav",bitrate="16k",parameters=["-ac", "1", "-acodec", "pcm_s16le"])
             output2=_input2.export(tf3.name, format="wav")
  
-
             r = Recognizer()
             with AudioFile(tf3) as source:
                 audio2 = r.record(source) # read the entire audio file
@@ -743,7 +738,6 @@ class MainHandler(BaseHandler):
     @tornado.web.asynchronous
     def get(self):
         self.render("static/tokengenerator.html", token=self.get_argument("refreshtoken"))
-
 
 
 class StartAuthHandler(tornado.web.RequestHandler):
@@ -812,7 +806,6 @@ class MessageHandler(BaseHandler):
             self.set_header('Content-Type', 'text/plain')
             self.write(self.get_argument("hub.challenge", default=None, strip=False))
             self.finish()
-
     
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
@@ -820,7 +813,7 @@ class MessageHandler(BaseHandler):
         event = output['entry'][0]['messaging']
         for x in event:
             recipient_id = x['sender']['id']
-            if x.get('postback') and x['postback'].get('payload'):
+            if "postback" in x and "payload" in x['postback']:
                 payload = x['postback']['payload']
                 if payload=="AUTH":
                     print("Generating login link...")
@@ -830,10 +823,10 @@ class MessageHandler(BaseHandler):
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                     print(r.text)
                     print("Made post request")
-            elif "message" in x and "sticker-id" in x["message"]:
+            elif "message" in x and "sticker_id" in x["message"]:
                 print("received sticker")
                 bot.send_text_message(recipient_id, "(y)")
-            elif (x.get('message') and x['message'].get('text')):
+            elif "message" in x and "text" in x['message']:
                 message = x['message']['text']
                 print("The message:", message)
                 try:
@@ -857,7 +850,6 @@ class MessageHandler(BaseHandler):
                                 bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
                           
                         else:
-                            
                             print("Getting Alexa's response from AudioHandler. Message was: "+message)
                             # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
                             alexaresponse = getAlexa(message,recipient_id)
@@ -868,7 +860,6 @@ class MessageHandler(BaseHandler):
                             bot.send_text_message(recipient_id, alexaresponse)
                 except TimeoutError:
                     print(traceback.format_exc())
-
                     bot.send_text_message(recipient_id, "Request took too long.")
                 except Exception,err:
                     print("Couldn't understand: ", traceback.format_exc())
@@ -891,8 +882,6 @@ class AudioHandler(BaseHandler):
         # uid = tornado.escape.xhtml_escape(self.current_user)
 
         token=self.get_argument("token") #get argument later
-        #token=""
-        
 
         print("geting argument...")
         phrase=self.get_argument("text")
@@ -946,22 +935,18 @@ class AudioHandler(BaseHandler):
             if (len(d) >= 1024):
                audio = d.split('\r\n\r\n')[1].rstrip('--')
 
-
         tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
         tf2.write(audio)
         _input2 = AudioSegment.from_mp3(tf2.name) 
         tf2.close()
 
-
         #convert mp3 file to wav
         tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
         output2=_input2.export(tf3.name, format="wav")
-       
 
         r = Recognizer()
         with AudioFile(tf3) as source:
             audio2 = r.record(source) # read the entire audio file
-
 
         # recognize speech using Microsoft Bing Voice Recognition
         BING_KEY = "ca19922330ba4b87819b93f35d4fea68" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
@@ -1004,14 +989,6 @@ class AudioHandler(BaseHandler):
         self.finish()
 
 
-
-
-
-
-
-
-
-
 #REST API version of getAlexa, pass in token and text, get text back
 class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
@@ -1021,14 +998,13 @@ class AudioHandler(BaseHandler):
         # uid = tornado.escape.xhtml_escape(self.current_user)
         # token = gettoken(uid)
         token="" #get argument later
-        if (token == False):
+        if token == False:
             self.set_status(403)
         else:
             print("geting argument...")
             phrase=self.get_argument("text", default=None, strip=False)
             print(phrase)
 
-            # phrase = "What is 22 divided by 2?"
             audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
 
@@ -1076,7 +1052,6 @@ class AudioHandler(BaseHandler):
                 if (len(d) >= 1024):
                    audio = d.split('\r\n\r\n')[1].rstrip('--')
 
-
             tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
             tf2.write(audio)
             _input2 = AudioSegment.from_mp3(tf2.name)
@@ -1084,7 +1059,6 @@ class AudioHandler(BaseHandler):
 
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
             output2=_input2.export(tf3.name, format="wav")
-
 
             r = sr.Recognizer()
             with sr.AudioFile(tf3) as source:
@@ -1101,11 +1075,9 @@ class AudioHandler(BaseHandler):
             except sr.RequestError as e:
                 print("Could not request results from Wit.ai service; {0}".format(e))
 
-
             self.set_header('Content-Type', 'text/plain')
             self.write(transcription)
             self.finish()
-
 
 
 def main():
@@ -1130,6 +1102,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-    
 
