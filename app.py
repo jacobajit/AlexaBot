@@ -840,7 +840,7 @@ class MessageHandler(BaseHandler):
                         bot.send_text_message(recipient_id, "hi there")
                     elif message.lower() in {"help", "help me"}:
                         bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
-                    elif 'sticker-id' in x['message']:
+                    elif "sticker-id" in x:
                         bot.send_text_message(recipient_id, "(y)")
                     else:
                         red = redis.from_url(redis_url)
