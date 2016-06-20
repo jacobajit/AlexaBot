@@ -830,7 +830,7 @@ class MessageHandler(BaseHandler):
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                     print(r.text)
                     print("Made post request")
-            elif "messgage" in x and "sticker-id" in x["message"]:
+            elif "message" in x and "sticker-id" in x["message"]:
                 print("received sticker")
                 bot.send_text_message(recipient_id, "(y)")
             elif (x.get('message') and x['message'].get('text')):
