@@ -830,19 +830,17 @@ class MessageHandler(BaseHandler):
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
                     print(r.text)
                     print("Made post request")
-                   
+            elif "message" in x and "sticker-id" in x["message"]:
+                print("received sticker")
+                bot.send_text_message(recipient_id, "(y)")
             elif (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 print("The message:", message)
                 try:
-                    print("message part: ", x["message"]) 
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                         bot.send_text_message(recipient_id, "hi there")
                     elif message.lower() in {"help", "help me"}:
                         bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
-                    elif "sticker-id" in x["message"]:
-                        print("received sticker")
-                        bot.send_text_message(recipient_id, "(y)")
                     else:
                         red = redis.from_url(redis_url)
                         if not red.exists(recipient_id+"-refresh_token"):
