@@ -680,7 +680,8 @@ def getAlexa(msg, mid, is_audio=False):
                 if re.match('.*boundary.*', v):
                     boundary =  v.split("=")[1]
 
-            data = r.content.split(boundary)
+            if boundary in locals():
+                data = r.content.split(boundary)
             for d in data:
                 if (len(d) >= 1024):
                    audio = d.split('\r\n\r\n')[1].rstrip('--')
