@@ -831,7 +831,7 @@ class MessageHandler(BaseHandler):
                 url = x["message"]["attachments"][0]["payload"]["url"]
                 print("Getting Alexa's response from AudioHandler")
                 # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
-                alexaresponse = getAlexa(message,recipient_id, True)
+                alexaresponse = getAlexa(url,recipient_id, True)
                 print("Alexa's response: ", alexaresponse)
                 # bot.send_text_message(recipient_id, alexaresponse.text)
                 if len(alexaresponse) > 320:
