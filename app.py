@@ -614,7 +614,7 @@ def gettoken(uid):
 
 #function version of getting Alexa's response in text
 @timeout_dec(20)
-def getAlexa(text,mid):
+def getAlexa(msg, mid, is_audio=False):
         print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         token = gettoken(mid)
@@ -625,18 +625,19 @@ def getAlexa(text,mid):
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
             print("geting argument...")
-            phrase=text
-            print(phrase)
-            #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
-            audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-            rxfile = audio.content
+            if not is_audio:
+                phrase=msg
+                print(phrase)
+                #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+                audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+                rxfile = audio.content
+            else:
+                rxfile = requests.get(msg).content
 
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             tf.write(rxfile)
             _input = AudioSegment.from_wav(tf.name)
-            tf.close()
 
-            tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
             url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
@@ -821,6 +822,19 @@ class MessageHandler(BaseHandler):
             elif "message" in x and "sticker_id" in x["message"]:
                 print("received sticker")
                 bot.send_text_message(recipient_id, "(y)")
+            elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"]["type"] == "audio":
+                print "received audio message"
+                url = x["message"]["attachments"]["url"]
+                print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
+                alexaresponse = getAlexa(message,recipient_id, True)
+                print("Alexa's response: ", alexaresponse)
+                # bot.send_text_message(recipient_id, alexaresponse.text)
+                if len(alexaresponse) > 320:
+                    alexaresponse = alexaresponse[:317] + "..."
+                bot.send_text_message(recipient_id, alexaresponse)
+
+
             elif "message" in x and "text" in x['message']:
                 message = x['message']['text']
                 print("The message:", message)
