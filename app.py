@@ -826,7 +826,7 @@ class MessageHandler(BaseHandler):
             elif "message" in x and "sticker_id" in x["message"]:
                 print("received sticker")
                 bot.send_text_message(recipient_id, "(y)")
-            elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"]["type"] == "audio":
+            elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"][0]["type"] == "audio":
                 print "received audio message"
                 url = x["message"]["attachments"][0]["payload"]["url"]
                 print("Getting Alexa's response from AudioHandler. Message was: "+message)
