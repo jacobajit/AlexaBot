@@ -668,6 +668,7 @@ def getAlexa(msg, mid, is_audio=False):
                 ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
             ]   
             r = requests.post(url, headers=headers, files=files)
+            print "got audio response from alexa"
             tf.close()
             for v in r.headers['content-type'].split(";"):
                 if re.match('.*boundary.*', v):
