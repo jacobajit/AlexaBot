@@ -828,7 +828,7 @@ class MessageHandler(BaseHandler):
                 bot.send_text_message(recipient_id, "(y)")
             elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"]["type"] == "audio":
                 print "received audio message"
-                url = x["message"]["attachments"]["payload"]["url"]
+                url = x["message"]["attachments"][0]["payload"]["url"]
                 print("Getting Alexa's response from AudioHandler. Message was: "+message)
                 # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
                 alexaresponse = getAlexa(message,recipient_id, True)
