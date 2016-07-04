@@ -637,10 +637,11 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:
-                rxfile = requests.get(msg, stream=True).raw.read()
+                rxfile = requests.get(msg, stream=True).raw
                 print "got audio from facebook: " + rxfile
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
-                tf.write(rxfile)
+                for chunk in r.iter_content(4):
+                    tf.write(chunk)
                 _input = AudioSegment.from_file(tf.name, format="mp4")
                 tf.close()
             
