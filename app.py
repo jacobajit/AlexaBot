@@ -639,10 +639,11 @@ def getAlexa(msg, mid, is_audio=False):
                 tf.close()
             else:
                 rxfile = urllib2.urlopen(msg).read()
-                print "got audio from facebook" + rxfile
+                print "got audio from facebook " + rxfile
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
                 _input = AudioSegment.from_file(tf.name, format="mp4")
+                print "_input: " + _input
                 tf.close()
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
