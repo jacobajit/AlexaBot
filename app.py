@@ -636,7 +636,7 @@ def getAlexa(msg, mid, is_audio=False):
                 tf.write(rxfile)
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
-           else:
+            else:
                 rxfile = requests.get(msg).content
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
