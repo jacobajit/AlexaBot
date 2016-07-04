@@ -624,7 +624,7 @@ def getAlexa(msg, mid, is_audio=False):
             red.delete(mid+"-refresh_token")
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
-            print("geting argument...")
+            print("getting argument...")
             if not is_audio:
                 phrase=msg
                 print(phrase)
@@ -638,9 +638,10 @@ def getAlexa(msg, mid, is_audio=False):
                 tf.close()
             else:
                 rxfile = requests.get(msg).content
+                print "got audio from facebook"
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
-                _input = AudioSegment.from_mp4(tf.name)
+                _input = AudioSegment.from_file(tf.name, format="mp4")
                 tf.close()
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
