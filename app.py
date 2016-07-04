@@ -638,7 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 tf.close()
             else:
                 rxfile = requests.get(msg, stream=True).raw
-                print "got audio from facebook: " + rxfile
+                print "got audio from facebook"
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 for chunk in r.iter_content(4):
                     tf.write(chunk)
