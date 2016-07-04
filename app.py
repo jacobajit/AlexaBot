@@ -829,7 +829,7 @@ class MessageHandler(BaseHandler):
             elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"][0]["type"] == "audio":
                 print "received audio message"
                 url = x["message"]["attachments"][0]["payload"]["url"]
-                print("Getting Alexa's response from AudioHandler. Message was: "+message)
+                print("Getting Alexa's response from AudioHandler")
                 # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
                 alexaresponse = getAlexa(message,recipient_id, True)
                 print("Alexa's response: ", alexaresponse)
