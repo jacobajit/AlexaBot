@@ -637,8 +637,8 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:
-                rxfile = requests.get(msg).content
-                print "got audio from facebook"
+                rxfile = requests.get(msg, stream=True).raw.read()
+                print "got audio from facebook: " + rxfile
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
                 _input = AudioSegment.from_file(tf.name, format="mp4")
@@ -681,8 +681,7 @@ def getAlexa(msg, mid, is_audio=False):
                 if re.match('.*boundary.*', v):
                     boundary =  v.split("=")[1]
 
-            if "boundary" in locals():
-                data = r.content.split(boundary)
+            data = r.content.split(boundary)
             for d in data:
                 if (len(d) >= 1024):
                    audio = d.split('\r\n\r\n')[1].rstrip('--')
