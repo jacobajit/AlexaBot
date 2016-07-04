@@ -631,6 +631,7 @@ def getAlexa(msg, mid, is_audio=False):
                 #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
                 audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
                 rxfile = audio.content
+                print "got audio from voicerss"
             else:
                 rxfile = requests.get(msg).content
 
@@ -892,7 +893,7 @@ class AudioHandler(BaseHandler):
 
         token=self.get_argument("token") #get argument later
 
-        print("geting argument...")
+        print("getting argument...")
         phrase=self.get_argument("text")
         print(phrase)
         #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
