@@ -632,14 +632,17 @@ def getAlexa(msg, mid, is_audio=False):
                 audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
                 rxfile = audio.content
                 print "got audio from voicerss"
-            else:
+                tf = tempfile.NamedTemporaryFile(suffix=".wav")
+                tf.write(rxfile)
+                _input = AudioSegment.from_wav(tf.name)
+                tf.close()
+           else:
                 rxfile = requests.get(msg).content
-
-            tf = tempfile.NamedTemporaryFile(suffix=".wav")
-            tf.write(rxfile)
-            _input = AudioSegment.from_wav(tf.name)
-            tf.close()
-
+                tf = tempfile.NamedTemporaryFile(suffix=".mp4")
+                tf.write(rxfile)
+                _input = AudioSegment.from_mp4(tf.name)
+                tf.close()
+            
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
