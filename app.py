@@ -814,39 +814,39 @@ class MessageHandler(BaseHandler):
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
         print("OUTPUT: ",output)
-        event = output['entry'][0]['messaging']
-        for x in event:
-            recipient_id = x['sender']['id']
-            if "postback" in x and "payload" in x['postback']:
-                payload = x['postback']['payload']
-                if payload=="AUTH":
-                    print("Generating login link...")
-                    link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
-                    messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
-                    payload = {"recipient": {"id": recipient_id}, "message": messageData}
-                    r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
-                    print(r.text)
-                    print("Made post request")
-            elif "message" in x and "sticker_id" in x["message"]:
-                print("received sticker")
-                bot.send_text_message(recipient_id, "(y)")
-            elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"][0]["type"] == "audio":
-                print "received audio message"
-                url = x["message"]["attachments"][0]["payload"]["url"]
-                print("Getting Alexa's response from AudioHandler")
-                # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
-                alexaresponse = getAlexa(url,recipient_id, True)
-                print("Alexa's response: ", alexaresponse)
-                # bot.send_text_message(recipient_id, alexaresponse.text)
-                if len(alexaresponse) > 320:
-                    alexaresponse = alexaresponse[:317] + "..."
-                bot.send_text_message(recipient_id, alexaresponse)
+        try:
+            event = output['entry'][0]['messaging']
+            for x in event:
+                recipient_id = x['sender']['id']
+                if "postback" in x and "payload" in x['postback']:
+                    payload = x['postback']['payload']
+                    if payload=="AUTH":
+                        print("Generating login link...")
+                        link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
+                        messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
+                        payload = {"recipient": {"id": recipient_id}, "message": messageData}
+                        r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
+                        print(r.text)
+                        print("Made post request")
+                elif "message" in x and "sticker_id" in x["message"]:
+                    print("received sticker")
+                    bot.send_text_message(recipient_id, "(y)")
+                elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"][0]["type"] == "audio":
+                    print "received audio message"
+                    url = x["message"]["attachments"][0]["payload"]["url"]
+                    print("Getting Alexa's response from AudioHandler")
+                    # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
+                    alexaresponse = getAlexa(url,recipient_id, True)
+                    print("Alexa's response: ", alexaresponse)
+                    # bot.send_text_message(recipient_id, alexaresponse.text)
+                    if len(alexaresponse) > 320:
+                        alexaresponse = alexaresponse[:317] + "..."
+                    bot.send_text_message(recipient_id, alexaresponse)
 
 
-            elif "message" in x and "text" in x['message']:
-                message = x['message']['text']
-                print("The message:", message)
-                try:
+                elif "message" in x and "text" in x['message']:
+                    message = x['message']['text']
+                    print("The message:", message)
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                         bot.send_text_message(recipient_id, "hi there")
                     elif message.lower() in {"help", "help me"}:
@@ -875,14 +875,14 @@ class MessageHandler(BaseHandler):
                             if len(alexaresponse) > 320:
                                 alexaresponse = alexaresponse[:317] + "..."
                             bot.send_text_message(recipient_id, alexaresponse)
-                except TimeoutError:
-                    print(traceback.format_exc())
-                    bot.send_text_message(recipient_id, "Request took too long.")
-                except Exception,err:
-                    print("Couldn't understand: ", traceback.format_exc())
-                    bot.send_text_message(recipient_id, "Sorry, something went wrong.")
-            else:
-                pass
+                else:
+                    pass
+        except TimeoutError:
+            print(traceback.format_exc())
+            bot.send_text_message(recipient_id, "Request took too long.")
+        except Exception,err:
+            print("Couldn't understand: ", traceback.format_exc())
+            bot.send_text_message(recipient_id, "Sorry, something went wrong.")
         self.set_status(200)
         self.finish()
 
