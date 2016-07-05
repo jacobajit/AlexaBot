@@ -639,10 +639,10 @@ def getAlexa(msg, mid, is_audio=False):
 	        tf.close()
             else:
                 rxfile = urllib2.urlopen(msg).read()
-                print "got audio from facebook " + rxfile
-                tf = tempfile.NamedTemporaryFile(suffix=".mp4")
+                print "got audio from facebook"
+                tf = tempfile.NamedTemporaryFile(suffix=".mp3")
                 tf.write(rxfile)
-                _input = AudioSegment.from_file(tf.name, format="mp4")
+                _input = AudioSegment.from_file(tf.name, format="mp3")
                 tf.close()
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
@@ -842,8 +842,6 @@ class MessageHandler(BaseHandler):
                     if len(alexaresponse) > 320:
                         alexaresponse = alexaresponse[:317] + "..."
                     bot.send_text_message(recipient_id, alexaresponse)
-
-
                 elif "message" in x and "text" in x['message']:
                     message = x['message']['text']
                     print("The message:", message)
