@@ -625,8 +625,6 @@ def getAlexa(msg, mid, is_audio=False):
             red.delete(mid+"-refresh_token")
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
-            if is_audio:
-                return "audio still not working :("
             print("getting argument...")
             if not is_audio:
                 phrase=msg
