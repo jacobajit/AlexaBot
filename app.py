@@ -631,14 +631,14 @@ def getAlexa(msg, mid, is_audio=False):
             if not is_audio:
                 phrase=msg
                 print(phrase)
-                #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
-                audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-                rxfile = audio.content
-                print "got audio from voicerss"
-                tf = tempfile.NamedTemporaryFile(suffix=".wav")
-                tf.write(rxfile)
-                _input = AudioSegment.from_wav(tf.name)
-                tf.close()
+            #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+	        audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+	        rxfile = audio.content
+
+	        tf = tempfile.NamedTemporaryFile(suffix=".wav")
+	        tf.write(rxfile)
+	        _input = AudioSegment.from_wav(tf.name)
+	        tf.close()
             else:
                 rxfile = urllib2.urlopen(msg).read()
                 print "got audio from facebook " + rxfile
@@ -650,8 +650,6 @@ def getAlexa(msg, mid, is_audio=False):
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
-            print "tf:"
-            print tf.read()
             url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
             headers = {'Authorization' : 'Bearer %s' % token}
             d = {
@@ -679,8 +677,6 @@ def getAlexa(msg, mid, is_audio=False):
                 ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
             ]   
             r = requests.post(url, headers=headers, files=files)
-            print "got audio response from alexa"
-            print "alexa audio response: " + r.content
             tf.close()
             for v in r.headers['content-type'].split(";"):
                 if re.match('.*boundary.*', v):
