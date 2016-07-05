@@ -649,7 +649,7 @@ def getAlexa(msg, mid, is_audio=False):
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
             print "f:"
-            print f
+            print f.read()
             url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
             headers = {'Authorization' : 'Bearer %s' % token}
             d = {
