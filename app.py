@@ -643,12 +643,13 @@ def getAlexa(msg, mid, is_audio=False):
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
                 _input = AudioSegment.from_file(tf.name, format="mp4")
-                print "_input: " + _input
                 tf.close()
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
+            print "f:"
+            print f
             url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
             headers = {'Authorization' : 'Bearer %s' % token}
             d = {
