@@ -640,9 +640,9 @@ def getAlexa(msg, mid, is_audio=False):
             else:
                 rxfile = urllib2.urlopen(msg).read()
                 print "got audio from facebook"
-                tf = tempfile.NamedTemporaryFile(suffix=".mp3")
+                tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
-                _input = AudioSegment.from_file(tf.name, format="mp3")
+                _input = AudioSegment.from_file(tf.name, format="mp4")
                 tf.close()
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
@@ -680,10 +680,13 @@ def getAlexa(msg, mid, is_audio=False):
                 if re.match('.*boundary.*', v):
                     boundary =  v.split("=")[1]
             
-            data = r.content.split(boundary)
-            for d in data:
-                if (len(d) >= 1024):
-                    audio = d.split('\r\n\r\n')[1].rstrip('--')
+            if "boundary" in locals():
+                data = r.content.split(boundary)
+                for d in data:
+                    if (len(d) >= 1024):
+                        audio = d.split('\r\n\r\n')[1].rstrip('--')
+            else:
+                audio = r.content.split('\r\n\r\n')[1].rstrip('--')
 
             tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
             tf2.write(audio)
