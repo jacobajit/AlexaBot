@@ -626,24 +626,25 @@ def getAlexa(msg, mid, is_audio=False):
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
             print("getting argument...")
-            if not is_audio:
+            if not is_audio:  # received text
                 phrase=msg
                 print(phrase)
                 #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
                 audio = requests.get('https://api.voicerss.org/', verify=False, params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
                 rxfile = audio.content
-
                 tf = tempfile.NamedTemporaryFile(suffix=".wav")
                 tf.write(rxfile)
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
-            else:
+            else:  # received audio
                 rxfile = urllib2.urlopen(msg).read()
                 print "got audio from facebook at " + msg
+                # convert mp4 to wav
                 tf = tempfile.NamedTemporaryFile(suffix=".mp4")
                 tf.write(rxfile)
                 _input = AudioSegment.from_file(tf.name, format="mp4")
                 tf.close()
+                print "got AudioSegment from mp4"
             
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
