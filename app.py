@@ -645,7 +645,8 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_file(tf.name, format="mp4")
                 tf.close()
                 print "got AudioSegment from mp4"
-            
+           
+
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
