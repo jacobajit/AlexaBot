@@ -638,7 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:  # received audio
-                time.sleep(4)
+                time.sleep(5)
                 got_audio = False
                 for _ in range(4):
                     rxfile = urllib2.urlopen(msg).read()
@@ -655,7 +655,7 @@ def getAlexa(msg, mid, is_audio=False):
                     finally:
                         tf.close()
                 if not got_audio:
-                    raise TimeoutError("Error retrieving audio")
+                    raise TimeoutError()
                 print "got AudioSegment from mp4"
            
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
