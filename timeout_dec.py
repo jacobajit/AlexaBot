@@ -3,7 +3,7 @@ from functools import wraps
 import signal
 import os
 
-def TimeoutError(Exception):
+class TimeoutError(Exception):
     pass
 
 def timeout_dec(seconds=15, error_message=os.strerror(errno.ETIME)):
