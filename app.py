@@ -648,9 +648,10 @@ def getAlexa(msg, mid, is_audio=False):
                     try:
                         _input = AudioSegment.from_file(tf.name, format="mp4")
                         break
+                    except:
+                        time.sleep(2)
                     finally:
                         tf.close()
-                    time.sleep(2)
                 print "got AudioSegment from mp4"
            
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
