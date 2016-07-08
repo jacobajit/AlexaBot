@@ -17,6 +17,7 @@ from pydub import AudioSegment
 from pymessenger.bot import Bot
 import traceback
 import urllib2
+import time
 
 #pydub imports
 import io, subprocess, wave, aifc, base64
@@ -637,6 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:  # received audio
+                time.sleep(2)
                 rxfile = urllib2.urlopen(msg).read()
                 print "got audio from facebook at " + msg
                 # convert mp4 to wav
