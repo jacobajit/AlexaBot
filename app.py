@@ -638,7 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:  # received audio
-                time.sleep(5)
+                time.sleep(10)
                 got_audio = False
                 for _ in range(4):
                     rxfile = urllib2.urlopen(msg).read()
