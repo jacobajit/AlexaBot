@@ -638,7 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:  # received audio
-                time.sleep(8)
+                time.sleep(15)
                 #got_audio = False
                 #for _ in range(4):
                 #    if got_audio:
