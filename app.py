@@ -638,7 +638,7 @@ def getAlexa(msg, mid, is_audio=False):
                 _input = AudioSegment.from_wav(tf.name)
                 tf.close()
             else:  # received audio
-                time.sleep(10)
+                #time.sleep(10)
                 #got_audio = False
                 #for _ in range(4):
                 #    if got_audio:
@@ -646,10 +646,11 @@ def getAlexa(msg, mid, is_audio=False):
                 rxfile = urllib2.urlopen(msg).read()
                 print "got audio from facebook at " + msg
                     # convert mp4 to wav
-                tf = tempfile.NamedTemporaryFile(suffix=".mp4")
-                tf.write(rxfile)
+                with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tf:
+                    tf.write(rxfile)
                 #    try:
                 _input = AudioSegment.from_file(tf.name, format="mp4")
+                os.remove(tf.name)
                 #        got_audio = True
                 #    except:
                 #        time.sleep(2)
