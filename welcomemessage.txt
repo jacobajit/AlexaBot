@@ -25,4 +25,4 @@ curl -X POST -H "Content-Type: application/json" -d '{
       }
     }
   ]
-}' "https://graph.facebook.com/v2.6/1312199065476896/thread_settings?access_token=EAAJPHXpVWQIBAO6MCtjNZBdaQ9baC5Cd3xgElE3e97kSazwktYGZBGHzZBvEiMOKElXNZADtQtsRiZA80ZB5uSQZC1MA8nKhCyFxKIb6LO8ZACugMQnt4tyZB4mYpftZAIfcZC4ZCh34Y4mB7fH6zSXmlAazAn3L0SXwxfXoVhj4QZBcb4QZDZD"
+}' "https://graph.facebook.com/v2.6/1312199065476896/thread_settings?access_token=<PAGE_ACCESS_TOKEN"
