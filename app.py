@@ -690,12 +690,15 @@ def getAlexa(msg, mid, is_audio=False):
             else:
                 audio = r.content.split('\r\n\r\n')[1].rstrip('--')
 
-            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
             tf2.write(audio)
-            the_data = {"recipient": {"id": mid}, "message": {"attachment": {"type": "audio", "payload": {}}}, "filedata": tf2.name + ";type=audio/mp3"}
-            requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + FACEBOOK_TOKEN, json=the_data)
-            _input2 = AudioSegment.from_mp3(tf2.name)
             tf2.close()
+            payload = {"recipient": {"id": mid}, "message": {"attachment": {"type": "audio", "payload": {}}}}
+            files = {"filedata": (open(tf2.name, 'rb'), "audio/mp3")}
+            requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + FACEBOOK_TOKEN, json=payload, files=files)
+            print "sent Alexa's audio response"
+            _input2 = AudioSegment.from_mp3(tf2.name)
+            os.remove(tf2.name)
 
             #convert mp3 file to wav
             tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
