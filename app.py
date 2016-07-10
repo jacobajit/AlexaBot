@@ -1014,93 +1014,93 @@ class AudioHandler(BaseHandler):
 
 
 #REST API version of getAlexa, pass in token and text, get text back
-class AudioHandler(BaseHandler):
-    # @tornado.web.authenticated
-    @tornado.web.asynchronous
-    def get(self):
-        print "getting post..."
-        # uid = tornado.escape.xhtml_escape(self.current_user)
-        # token = gettoken(uid)
-        token="" #get argument later
-        if token == False:
-            self.set_status(403)
-        else:
-            print "geting argument..."
-            phrase=self.get_argument("text", default=None, strip=False)
-            print phrase
-
-            audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-            rxfile = audio.content
-
-            tf = tempfile.NamedTemporaryFile(suffix=".wav")
-            tf.write(rxfile)
-            _input = AudioSegment.from_wav(tf.name)
-            tf.close()
-
-            tf = tempfile.NamedTemporaryFile(suffix=".wav")
-            output = _input.set_channels(1).set_frame_rate(16000)
-            f = output.export(tf.name, format="wav")
-            url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
-            headers = {'Authorization' : 'Bearer %s' % token}
-            d = {
-                "messageHeader": {
-                    "deviceContext": [
-                        {
-                            "name": "playbackState",
-                            "namespace": "AudioPlayer",
-                            "payload": {
-                                "streamId": "",
-                                "offsetInMilliseconds": "0",
-                                "playerActivity": "IDLE"
-                            }
-                        }
-                    ]
-                },
-                "messageBody": {
-                    "profile": "alexa-close-talk",
-                    "locale": "en-us",
-                    "format": "audio/L16; rate=16000; channels=1"
-                }
-            }
-            files = [
-                ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
-                ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
-            ]   
-            r = requests.post(url, headers=headers, files=files)
-            tf.close()
-            for v in r.headers['content-type'].split(";"):
-                if re.match('.*boundary.*', v):
-                    boundary =  v.split("=")[1]
-            data = r.content.split(boundary)
-            for d in data:
-                if (len(d) >= 1024):
-                   audio = d.split('\r\n\r\n')[1].rstrip('--')
-
-            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
-            tf2.write(audio)
-            _input2 = AudioSegment.from_mp3(tf2.name)
-            tf2.close()
-
-            tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
-            output2=_input2.export(tf3.name, format="wav")
-
-            r = sr.Recognizer()
-            with sr.AudioFile(tf3) as source:
-                audio2 = r.record(source) # read the entire audio file
-
-            # recognize speech using Wit.ai
-            WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
-            try:
-                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                print "Wit.ai thinks you said " + transcription
-            except sr.UnknownValueError:
-                print "Wit.ai could not understand audio"
-            except sr.RequestError as e:
-                print "Could not request results from Wit.ai service; {0}".format(e)
-
-            self.set_header('Content-Type', 'text/plain')
-            self.write(transcription)
-            self.finish()
+#class AudioHandler(BaseHandler):
+#    # @tornado.web.authenticated
+#    @tornado.web.asynchronous
+#    def get(self):
+#        print "getting post..."
+#        # uid = tornado.escape.xhtml_escape(self.current_user)
+#        # token = gettoken(uid)
+#        token="" #get argument later
+#        if token == False:
+#            self.set_status(403)
+#        else:
+#            print "geting argument..."
+#            phrase=self.get_argument("text", default=None, strip=False)
+#            print phrase
+#
+#            audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+#            rxfile = audio.content
+#
+#            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+#            tf.write(rxfile)
+#            _input = AudioSegment.from_wav(tf.name)
+#            tf.close()
+#
+#            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+#            output = _input.set_channels(1).set_frame_rate(16000)
+#            f = output.export(tf.name, format="wav")
+#            url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
+#            headers = {'Authorization' : 'Bearer %s' % token}
+#            d = {
+#                "messageHeader": {
+#                    "deviceContext": [
+#                        {
+#                            "name": "playbackState",
+#                            "namespace": "AudioPlayer",
+#                            "payload": {
+#                                "streamId": "",
+#                                "offsetInMilliseconds": "0",
+#                                "playerActivity": "IDLE"
+#                            }
+#                        }
+#                    ]
+#                },
+#                "messageBody": {
+#                    "profile": "alexa-close-talk",
+#                    "locale": "en-us",
+#                    "format": "audio/L16; rate=16000; channels=1"
+#                }
+#            }
+#            files = [
+#                ('file', ('request', json.dumps(d), 'application/json; charset=UTF-8')),
+#                ('file', ('audio', tf, 'audio/L16; rate=16000; channels=1'))
+#            ]   
+#            r = requests.post(url, headers=headers, files=files)
+#            tf.close()
+#            for v in r.headers['content-type'].split(";"):
+#                if re.match('.*boundary.*', v):
+#                    boundary =  v.split("=")[1]
+#            data = r.content.split(boundary)
+#            for d in data:
+#                if (len(d) >= 1024):
+#                   audio = d.split('\r\n\r\n')[1].rstrip('--')
+#
+#            tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
+#            tf2.write(audio)
+#            _input2 = AudioSegment.from_mp3(tf2.name)
+#            tf2.close()
+#
+#            tf3 = tempfile.NamedTemporaryFile(suffix=".wav")
+#            output2=_input2.export(tf3.name, format="wav")
+#
+#            r = sr.Recognizer()
+#            with sr.AudioFile(tf3) as source:
+#                audio2 = r.record(source) # read the entire audio file
+#
+#            # recognize speech using Wit.ai
+#            WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
+#            try:
+#                transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
+#                print "Wit.ai thinks you said " + transcription
+#            except sr.UnknownValueError:
+#                print "Wit.ai could not understand audio"
+#            except sr.RequestError as e:
+#                print "Could not request results from Wit.ai service; {0}".format(e)
+#
+#            self.set_header('Content-Type', 'text/plain')
+#            self.write(transcription)
+#            self.finish()
 
 
 def main():
