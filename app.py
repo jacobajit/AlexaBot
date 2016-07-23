@@ -16,8 +16,6 @@ from pydub import AudioSegment
 # import speech_recognition as sr
 from pymessenger.bot import Bot
 import traceback
-import urllib2
-import time
 
 #pydub imports
 import io, subprocess, wave, aifc, base64
@@ -509,7 +507,7 @@ class Recognizer(AudioSource):
             convert_width = 2 # audio samples must be 16-bit
         )
         if key is None: key = "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"
-        url = "https://speech.googleapis.com/v1beta1/speech:syncrecognize?{0}".format(urlencode({
+        url = "http://www.google.com/speech-api/v2/recognize?{0}".format(urlencode({
             "client": "chromium",
             "lang": language,
             "key": key,
@@ -616,8 +614,8 @@ def gettoken(uid):
 
 #function version of getting Alexa's response in text
 @timeout_dec(20)
-def getAlexa(msg, mid, is_audio=False):
-        print "getting post..."
+def getAlexa(text,mid):
+        print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         token = gettoken(mid)
         #token=""
@@ -626,27 +624,18 @@ def getAlexa(msg, mid, is_audio=False):
             red.delete(mid+"-refresh_token")
             return "Sorry, it looks like you didn't log in to Amazon correctly. Try again here https://amazonalexabot.herokuapp.com/start and come back with your code."
         else:
-            print "getting argument..."
-            if not is_audio:  # received text
-                phrase=msg
-                print phrase
-                #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
-                audio = requests.get('https://api.voicerss.org/', verify=False, params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
-                rxfile = audio.content
-                tf = tempfile.NamedTemporaryFile(suffix=".wav")
-                tf.write(rxfile)
-                _input = AudioSegment.from_wav(tf.name)
-                tf.close()
-            else:  # received audio
-                rxfile = urllib2.urlopen(msg).read()
-                print "got audio from facebook at " + msg
-                # convert mp4 to wav
-                with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tf:
-                    tf.write(rxfile)
-                _input = AudioSegment.from_file(tf.name, format="mp4")
-                os.remove(tf.name)
-                print "got AudioSegment from mp4"
-           
+            print("geting argument...")
+            phrase=text
+            print(phrase)
+            #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
+            audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
+            rxfile = audio.content
+
+            tf = tempfile.NamedTemporaryFile(suffix=".wav")
+            tf.write(rxfile)
+            _input = AudioSegment.from_wav(tf.name)
+            tf.close()
+
             tf = tempfile.NamedTemporaryFile(suffix=".wav")
             output = _input.set_channels(1).set_frame_rate(16000)
             f = output.export(tf.name, format="wav")
@@ -681,14 +670,11 @@ def getAlexa(msg, mid, is_audio=False):
             for v in r.headers['content-type'].split(";"):
                 if re.match('.*boundary.*', v):
                     boundary =  v.split("=")[1]
-            
-            if "boundary" in locals():
-                data = r.content.split(boundary)
-                for d in data:
-                    if (len(d) >= 1024):
-                        audio = d.split('\r\n\r\n')[1].rstrip('--')
-            else:
-                audio = r.content.split('\r\n\r\n')[1].rstrip('--')
+
+            data = r.content.split(boundary)
+            for d in data:
+                if (len(d) >= 1024):
+                   audio = d.split('\r\n\r\n')[1].rstrip('--')
 
             tf2 = tempfile.NamedTemporaryFile(suffix=".mp3")
             tf2.write(audio)
@@ -707,31 +693,32 @@ def getAlexa(msg, mid, is_audio=False):
            # # recognize speech using Microsoft Bing Voice Recognition
            #  BING_KEY = "578545f1fb3940fb99151cfd79b476b1" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
            #  try:
-           #      print "Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY)
+           #      print("Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY))
            #  except UnknownValueError:
-           #      print "Microsoft Bing Voice Recognition could not understand audio"
+           #      print("Microsoft Bing Voice Recognition could not understand audio")
            #  except RequestError as e:
-           #      print "Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e)
+           #      print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
 
             # recognize speech using Google Speech Recognition
             try:
                 # for testing purposes, we're just using the default API key
                 # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
                 # instead of `r.recognize_google(audio)`
-                transcription=r.recognize_google(audio2, key='AIzaSyBmmqjUsStJat65IP7KgKuH2cz6rRvlIr8')
-                print "Google Speech Recognition thinks you said " + transcription
+                transcription=r.recognize_google(audio2, key=Google_Speech_Token)
+                print("Google Speech Recognition thinks you said " + transcription)
             except (UnknownValueError, RequestError):
                  # recognize speech using Wit.ai
+                print(token)
                 WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
                 try:
                     transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                    print "Wit.ai thinks you said " + transcription
+                    print("Wit.ai thinks you said " + transcription)
                 except UnknownValueError:
-                    print "Wit.ai could not understand audio"
+                    print("Wit.ai could not understand audio")
                 except RequestError as e:
-                    print "Could not request results from Wit.ai service; {0}".format(e)
+                    print("Could not request results from Wit.ai service; {0}".format(e))
 
-                print "Google Speech Recognition could not understand audio"
+                print("Google Speech Recognition could not understand audio")
 
             return transcription
 
@@ -785,7 +772,7 @@ class CodeAuthHandler(tornado.web.RequestHandler):
         red = redis.from_url(redis_url)
         resp = json.loads(r.text)
         if mid != None:
-            print "fetched MID: " + mid
+            print("fetched MID: ",mid)
             red.set(mid+"-access_token", resp['access_token'])
             red.expire(mid+"-access_token", 3600)
             red.set(mid+"-refresh_token", resp['refresh_token'])
@@ -817,38 +804,27 @@ class MessageHandler(BaseHandler):
     
     def post(self):
         output = tornado.escape.json_decode(self.request.body) 
-        print "OUTPUT: " + str(output)
-        try:
-            event = output['entry'][0]['messaging']
-            for x in event:
-                recipient_id = x['sender']['id']
-                if "postback" in x and "payload" in x['postback']:
-                    payload = x['postback']['payload']
-                    if payload=="AUTH":
-                        print "Generating login link..."
-                        link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
-                        messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
-                        payload = {"recipient": {"id": recipient_id}, "message": messageData}
-                        r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
-                        print r.text
-                        print "Made post request"
-                elif "message" in x and "sticker_id" in x["message"]:
-                    print "received sticker"
-                    bot.send_text_message(recipient_id, "(y)")
-                elif "message" in x and "attachments" in x["message"] and x["message"]["attachments"][0]["type"] == "audio":
-                    print "received audio message"
-                    url = x["message"]["attachments"][0]["payload"]["url"]
-                    print "Getting Alexa's response from AudioHandler"
-                    # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
-                    alexaresponse = getAlexa(url,recipient_id, True)
-                    print "Alexa's response: " + alexaresponse
-                    # bot.send_text_message(recipient_id, alexaresponse.text)
-                    if len(alexaresponse) > 320:
-                        alexaresponse = alexaresponse[:317] + "..."
-                    bot.send_text_message(recipient_id, alexaresponse)
-                elif "message" in x and "text" in x['message']:
-                    message = x['message']['text']
-                    print "The message: " + message
+        print("OUTPUT: ",output)
+        event = output['entry'][0]['messaging']
+        for x in event:
+            recipient_id = x['sender']['id']
+            if "postback" in x and "payload" in x['postback']:
+                payload = x['postback']['payload']
+                if payload=="AUTH":
+                    print("Generating login link...")
+                    link='https://amazonalexabot.herokuapp.com/start?mid='+recipient_id
+                    messageData = {"attachment": {"type": "template","payload": {"template_type": "generic","elements": [{"title": "Login to Amazon","buttons": [{"type": "web_url","url": link,"title": "Login"}]}]}}}
+                    payload = {"recipient": {"id": recipient_id}, "message": messageData}
+                    r = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token="+TOKEN, json=payload)
+                    print(r.text)
+                    print("Made post request")
+            elif "message" in x and "sticker_id" in x["message"]:
+                print("received sticker")
+                bot.send_text_message(recipient_id, "(y)")
+            elif "message" in x and "text" in x['message']:
+                message = x['message']['text']
+                print("The message:", message)
+                try:
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
                         bot.send_text_message(recipient_id, "hi there")
                     elif message.lower() in {"help", "help me"}:
@@ -856,7 +832,7 @@ class MessageHandler(BaseHandler):
                     else:
                         red = redis.from_url(redis_url)
                         if not red.exists(recipient_id+"-refresh_token"):
-                            print "Received refresh token"
+                            print("Received refresh token")
                             red.set(recipient_id+"-refresh_token", message)
                             testing=gettoken(recipient_id)
                             if(testing==False):
@@ -869,22 +845,22 @@ class MessageHandler(BaseHandler):
                                 bot.send_text_message(recipient_id, "Great, you're logged in. Start talking to Alexa!")
                           
                         else:
-                            print "Getting Alexa's response from AudioHandler. Message was: " + message
+                            print("Getting Alexa's response from AudioHandler. Message was: "+message)
                             # alexaresponse = requests.get('https://amazonalexabot.herokuapp.com/audio', params={'text': message})
                             alexaresponse = getAlexa(message,recipient_id)
-                            print "Alexa's response: " + alexaresponse
+                            print("Alexa's response: ", alexaresponse)
                             # bot.send_text_message(recipient_id, alexaresponse.text)
                             if len(alexaresponse) > 320:
                                 alexaresponse = alexaresponse[:317] + "..."
                             bot.send_text_message(recipient_id, alexaresponse)
-                else:
-                    pass
-        except TimeoutError:
-            print traceback.format_exc()
-            bot.send_text_message(recipient_id, "Request took too long.")
-        except Exception,err:
-            print "Couldn't understand: " + traceback.format_exc()
-            bot.send_text_message(recipient_id, "Sorry, something went wrong.")
+                except TimeoutError:
+                    print(traceback.format_exc())
+                    bot.send_text_message(recipient_id, "Request took too long.")
+                except Exception,err:
+                    print("Couldn't understand: ", traceback.format_exc())
+                    bot.send_text_message(recipient_id, "Sorry, something went wrong.")
+            else:
+                pass
         self.set_status(200)
         self.finish()
 
@@ -897,14 +873,14 @@ class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        print "getting post..."
+        print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
 
         token=self.get_argument("token") #get argument later
 
-        print "getting argument..."
+        print("geting argument...")
         phrase=self.get_argument("text")
-        print phrase
+        print(phrase)
         #http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello&tl=En-us
         audio = requests.get('https://api.voicerss.org/', params={'key': VoiceRSS_Token, 'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
         rxfile = audio.content
@@ -970,11 +946,11 @@ class AudioHandler(BaseHandler):
         # recognize speech using Microsoft Bing Voice Recognition
         BING_KEY = "ca19922330ba4b87819b93f35d4fea68" # Microsoft Bing Voice Recognition API keys 32-character lowercase hexadecimal strings
         try:
-            print "Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY)
+            print("Microsoft Bing Voice Recognition thinks you said " + r.recognize_bing(audio2, key=BING_KEY))
         except UnknownValueError:
-            print "Microsoft Bing Voice Recognition could not understand audio"
+            print("Microsoft Bing Voice Recognition could not understand audio")
         except RequestError as e:
-            print "Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e)
+            print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
 
         # recognize speech using Google Speech Recognition
         try:
@@ -982,24 +958,25 @@ class AudioHandler(BaseHandler):
             # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
             # instead of `r.recognize_google(audio)`
             transcription=r.recognize_google(audio2, key=Google_Speech_Token)
-            print "Google Speech Recognition thinks you said " + transcriptionG
+            print("Google Speech Recognition thinks you said " + transcriptionG)
         except:
             # recognize speech using Wit.ai
+            print(token)
             WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
             try:
                 transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                print "Wit.ai thinks you said " + transcription
+                print("Wit.ai thinks you said " + transcription)
             except UnknownValueError:
-                print "Wit.ai could not understand audio"
+                print("Wit.ai could not understand audio")
             except RequestError as e:
-                print "Could not request results from Wit.ai service; {0}".format(e)
+                print("Could not request results from Wit.ai service; {0}".format(e))
 
         #except UnknownValueError:
         #    transcriptionG=transcriptionW
-        #    print "Google Speech Recognition could not understand audio"
+        #    print("Google Speech Recognition could not understand audio")
         #except RequestError as e:
         #    transcriptionG=transcriptionW
-        #    print "Could not request results from Google Speech Recognition service; {0}".format(e)
+        #    print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
         self.set_header('Content-Type', 'text/plain')
@@ -1012,16 +989,16 @@ class AudioHandler(BaseHandler):
     # @tornado.web.authenticated
     @tornado.web.asynchronous
     def get(self):
-        print "getting post..."
+        print("getting post...")#
         # uid = tornado.escape.xhtml_escape(self.current_user)
         # token = gettoken(uid)
         token="" #get argument later
         if token == False:
             self.set_status(403)
         else:
-            print "geting argument..."
+            print("geting argument...")
             phrase=self.get_argument("text", default=None, strip=False)
-            print phrase
+            print(phrase)
 
             audio = requests.get('http://www.voicerss.org/controls/speech.ashx', params={'src': phrase, 'hl': 'en-us', 'c': 'WAV', 'f': '16khz_16bit_mono'})
             rxfile = audio.content
@@ -1083,14 +1060,15 @@ class AudioHandler(BaseHandler):
                 audio2 = r.record(source) # read the entire audio file
 
             # recognize speech using Wit.ai
+            print(token)
             WIT_AI_KEY = Wit_Token # Wit.ai keys are 32-character uppercase alphanumeric strings
             try:
                 transcription=r.recognize_wit(audio2, key=WIT_AI_KEY)
-                print "Wit.ai thinks you said " + transcription
+                print("Wit.ai thinks you said " + transcription)
             except sr.UnknownValueError:
-                print "Wit.ai could not understand audio"
+                print("Wit.ai could not understand audio")
             except sr.RequestError as e:
-                print "Could not request results from Wit.ai service; {0}".format(e)
+                print("Could not request results from Wit.ai service; {0}".format(e))
 
             self.set_header('Content-Type', 'text/plain')
             self.write(transcription)
