@@ -271,7 +271,7 @@ class MessageHandler(BaseHandler):
                 print("The message:", message)
                 try:
                     if message.lower() in {"hi", "hello", "hi alexa", "hello alexa","hi there","hey alexa","hey", "hello there"}:
-                        bot.send_text_message(recipient_id, "hi there")
+                        bot.send_text_message(recipient_id, "Hi there")
                     elif message.lower() in {"help", "help me"}:
                         bot.send_text_message(recipient_id, "Type anything you would say to Amazon's Alexa assistant and receive her response. For more help with what you can say, check out the Things to Try section of the Alexa app.")
                     else:
@@ -303,7 +303,7 @@ class MessageHandler(BaseHandler):
                     bot.send_text_message(recipient_id, "Request took too long.")
                 except Exception,err:
                     print("Couldn't understand: ", traceback.format_exc())
-                    bot.send_text_message(recipient_id, "Sorry, something went wrong.")
+                    bot.send_text_message(recipient_id, "Alexa gave an invalid response. This may occur if you gave Alexa a command such as \"Turn on the lights,\" which requires no reply from Alexa. Otherwise, something went wrong and we are trying to fix it!")
             else:
                 pass
         self.set_status(200)
