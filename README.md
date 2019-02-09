@@ -5,4 +5,4 @@ With Amazon Alexa as a Facebook contact, you can quietly message Alexa and ask h
 To fork, obtain the credentials required in creds.py (stored in Heroku in this case). Requirements are in requirements.txt. Python, Redis required. FFMPEG required.
 
 
-![alt tag](https://i.imgur.com/LUFY5wm.png)
+<img src="https://i.imgur.com/LUFY5wm.png" alt="Smiley face" width=300>
